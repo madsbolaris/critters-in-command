@@ -32,7 +32,10 @@ the same folder):
 * A card named in the README that isn't found anywhere in the decklist (by
   name) is a hard error. Every card a story links to must actually be in the
   99 — fix the README (link the real card) or fix the decklist (the card
-  belongs in the deck) rather than treating it as a harmless namedrop.
+  belongs in the deck) rather than treating it as a harmless namedrop. This
+  check also accepts the character-name shorthand described above (e.g. a
+  ``/search`` link's text can be "Teferi" for "Teferi, Time Raveler"), with
+  the same ambiguity error when more than one deck card shares that name.
 
 Also reported, as a non-fatal ``INFO`` diagnostic, is the reverse gap: cards
 that are in the decklist but never get a mention in the README at all (basic
@@ -170,12 +173,24 @@ def parse_decklist(path: Path) -> DeckCards:
 
 
 def require_in_deck(link_text: str, cards: DeckCards, issues: list[Issue]) -> None:
-    if normalize_name(link_text) not in cards.by_name:
-        issues.append(Issue(
-            "ERROR",
-            f"'{link_text}' is linked in the README but is not in the decklist. "
-            "Every card the story references must actually be in the 99.",
-        ))
+    normalized = normalize_name(link_text)
+    if normalized in cards.by_name:
+        return
+    sharers = cards.character_names.get(normalized)
+    if sharers:
+        if len(set(sharers)) > 1:
+            issues.append(Issue(
+                "ERROR",
+                f"Ambiguous character name: '{link_text}' could be any of "
+                f"{', '.join(sorted(set(sharers)))} in this decklist. Use a fuller "
+                "name (or the card's epithet) to say which one it is.",
+            ))
+        return
+    issues.append(Issue(
+        "ERROR",
+        f"'{link_text}' is linked in the README but is not in the decklist. "
+        "Every card the story references must actually be in the 99.",
+    ))
 
 
 def check_scryfall_link(link_text: str, url: str, parsed: urllib.parse.ParseResult,
@@ -304,12 +319,16 @@ def find_uncovered_cards(readme_text: str, cards: DeckCards,
     most deck-unique cards (fewest other decks) first.
     """
     global_card_counts = global_card_counts or {}
-    covered = {normalize_name(match.group(1)) for match in LINK_RE.finditer(readme_text)}
-    uncovered = [
-        (raw_name, global_card_counts.get(normalized, 1) - 1)
-        for normalized, (raw_name, _set, _number) in cards.by_name.items()
-        if normalized not in covered and normalized not in BASIC_LAND_NAMES
-    ]
+    covered_texts = [match.group(1) for match in LINK_RE.finditer(readme_text)]
+    covered = {normalize_name(text) for text in covered_texts}
+    uncovered = []
+    for normalized, (raw_name, _set, _number) in cards.by_name.items():
+        if normalized in BASIC_LAND_NAMES or normalized in covered:
+            continue
+        if any(is_shortened_name_match(text, raw_name) or is_character_name_match(text, raw_name)
+               for text in covered_texts):
+            continue
+        uncovered.append((raw_name, global_card_counts.get(normalized, 1) - 1))
     uncovered.sort(key=lambda item: (item[1], item[0].lower()))
     return uncovered
 

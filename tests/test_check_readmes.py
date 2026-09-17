@@ -159,6 +159,42 @@ class BuildGlobalCardCountsTests(unittest.TestCase):
         self.assertEqual(counts[check_readmes.normalize_name("Caretaker's Talent")], 2)
 
 
+class RequireInDeckTests(unittest.TestCase):
+    def test_full_name_is_allowed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cards = check_readmes.parse_decklist(write_dck(Path(directory)))
+        issues = []
+        check_readmes.require_in_deck("Caretaker's Talent", cards, issues)
+        self.assertEqual(issues, [])
+
+    def test_unambiguous_character_name_is_allowed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "decklist.dck"
+            path.write_text(
+                "[metadata]\nName=Test Deck\n[main]\n1 Teferi, Time Raveler|WAR|[221]\n",
+                encoding="utf-8",
+            )
+            cards = check_readmes.parse_decklist(path)
+        issues = []
+        check_readmes.require_in_deck("Teferi", cards, issues)
+        self.assertEqual(issues, [])
+
+    def test_ambiguous_character_name_is_an_error(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "decklist.dck"
+            path.write_text(
+                "[metadata]\nName=Test Deck\n[main]\n"
+                "1 Teferi, Time Raveler|WAR|[221]\n"
+                "1 Teferi, Who Slows the Sunset|WOE|[400]\n",
+                encoding="utf-8",
+            )
+            cards = check_readmes.parse_decklist(path)
+        issues = []
+        check_readmes.require_in_deck("Teferi", cards, issues)
+        errors = [i for i in issues if i.level == "ERROR"]
+        self.assertTrue(any("Ambiguous character name" in i.message for i in errors))
+
+
 class ClassifyCardTypeTests(unittest.TestCase):
     def test_land_takes_priority_over_creature(self):
         self.assertEqual(check_readmes.classify_card_type("Land Creature — Tree"), "Land")
