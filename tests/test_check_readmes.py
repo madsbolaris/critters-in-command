@@ -55,6 +55,25 @@ class IsShortenedNameMatchTests(unittest.TestCase):
         self.assertTrue(check_readmes.is_shortened_name_match("Teferi's Tutelage", "Teferi's Tutelage"))
 
 
+class CharacterNameTests(unittest.TestCase):
+    def test_splits_off_comma_epithet(self):
+        self.assertEqual(check_readmes.character_name("Teferi, Time Raveler"), "Teferi")
+
+    def test_no_comma_returns_full_name(self):
+        self.assertEqual(check_readmes.character_name("Sol Ring"), "Sol Ring")
+
+
+class IsCharacterNameMatchTests(unittest.TestCase):
+    def test_leading_character_name_matches(self):
+        self.assertTrue(check_readmes.is_character_name_match("Teferi", "Teferi, Time Raveler"))
+
+    def test_trailing_epithet_does_not_match(self):
+        self.assertFalse(check_readmes.is_character_name_match("Time Raveler", "Teferi, Time Raveler"))
+
+    def test_names_without_a_comma_never_match(self):
+        self.assertFalse(check_readmes.is_character_name_match("Sol", "Sol Ring"))
+
+
 class ParseDecklistTests(unittest.TestCase):
     def test_parses_names_and_printings(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -62,6 +81,19 @@ class ParseDecklistTests(unittest.TestCase):
         self.assertIn(check_readmes.normalize_name("Caretaker's Talent"), cards.by_name)
         self.assertEqual(cards.by_printing[("blb", "6")][0], "Caretaker's Talent")
         self.assertEqual(cards.by_printing[("ltc", "348")][0], "The Great Henge")
+
+    def test_tracks_character_names_shared_across_cards(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "decklist.dck"
+            path.write_text(
+                "[metadata]\nName=Test Deck\n[main]\n"
+                "1 Teferi, Time Raveler|WAR|[221]\n"
+                "1 Teferi, Who Slows the Sunset|WOE|[400]\n",
+                encoding="utf-8",
+            )
+            cards = check_readmes.parse_decklist(path)
+        sharers = cards.character_names[check_readmes.normalize_name("Teferi")]
+        self.assertEqual(sorted(sharers), ["Teferi, Time Raveler", "Teferi, Who Slows the Sunset"])
 
     def test_ignores_sections_outside_the_known_boards(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -211,6 +243,37 @@ class CheckScryfallLinkTests(unittest.TestCase):
         issues = self._check("Caretaker's", "https://scryfall.com/card/blb/6/caretakers-talent")
         errors = [i for i in issues if i.level == "ERROR"]
         self.assertTrue(any("Printing collision" in i.message for i in errors))
+
+
+class CheckScryfallLinkCharacterNameTests(unittest.TestCase):
+    def _check(self, text, url, cards):
+        import urllib.parse
+        return check_readmes.check_scryfall_link(text, url, urllib.parse.urlparse(url), cards)
+
+    def test_unambiguous_character_name_is_allowed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "decklist.dck"
+            path.write_text(
+                "[metadata]\nName=Test Deck\n[main]\n1 Teferi, Time Raveler|WAR|[221]\n",
+                encoding="utf-8",
+            )
+            cards = check_readmes.parse_decklist(path)
+        issues = self._check("Teferi", "https://scryfall.com/card/war/221", cards)
+        self.assertEqual(issues, [])
+
+    def test_ambiguous_character_name_is_an_error(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "decklist.dck"
+            path.write_text(
+                "[metadata]\nName=Test Deck\n[main]\n"
+                "1 Teferi, Time Raveler|WAR|[221]\n"
+                "1 Teferi, Who Slows the Sunset|WOE|[400]\n",
+                encoding="utf-8",
+            )
+            cards = check_readmes.parse_decklist(path)
+        issues = self._check("Teferi", "https://scryfall.com/card/war/221", cards)
+        errors = [i for i in issues if i.level == "ERROR"]
+        self.assertTrue(any("Ambiguous character name" in i.message for i in errors))
 
 
 class CheckLinkTests(unittest.TestCase):

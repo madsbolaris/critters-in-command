@@ -22,7 +22,11 @@ the same folder):
   Scryfall page actually is (a real bug, e.g. a copy/paste or collector
   number typo). Link text may be shortened to the card name's trailing
   word(s) (e.g. "Tutelage" for "Teferi's Tutelage") since the set/number
-  already pins down the exact card unambiguously.
+  already pins down the exact card unambiguously. Link text may also be
+  shortened to just the character name before the comma (e.g. "Teferi" for
+  "Teferi, Time Raveler") — unless another card in the decklist shares that
+  same character name, in which case the shorthand is ambiguous and is a
+  hard error even though the URL itself is unambiguous.
 * Any external link outside of scryfall.com / deckcheck.co is flagged as a
   warning (not necessarily wrong, just worth a human look).
 * A card named in the README that isn't found anywhere in the decklist (by
@@ -107,6 +111,18 @@ def is_shortened_name_match(link_text: str, deck_name: str) -> bool:
     return deck_words[-len(link_words):] == link_words
 
 
+def character_name(name: str) -> str:
+    """The portion of a card name before the first comma, e.g. "Teferi" from "Teferi, Time Raveler"."""
+    return name.split(",", 1)[0].strip()
+
+
+def is_character_name_match(link_text: str, deck_name: str) -> bool:
+    """True if link_text is exactly the character-name portion of deck_name (before the comma)."""
+    if "," not in deck_name:
+        return False
+    return normalize_name(link_text) == normalize_name(character_name(deck_name))
+
+
 @dataclass(frozen=True)
 class Issue:
     level: str  # "ERROR" or "WARNING"
@@ -119,11 +135,14 @@ class DeckCards:
     by_name: dict
     # (lowercase set code, lowercase collector number) -> (raw name, set code, collector number)
     by_printing: dict
+    # normalized character name (before the comma) -> raw names of every card sharing it
+    character_names: dict
 
 
 def parse_decklist(path: Path) -> DeckCards:
     by_name: dict = {}
     by_printing: dict = {}
+    character_names: dict = {}
     section = None
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         header = DCK_SECTION.match(raw_line)
@@ -143,9 +162,11 @@ def parse_decklist(path: Path) -> DeckCards:
         collector = parts[2].strip().strip("[]") if len(parts) > 2 else ""
         entry = (name, set_code, collector)
         by_name[normalize_name(name)] = entry
+        if "," in name:
+            character_names.setdefault(normalize_name(character_name(name)), []).append(name)
         if set_code and collector:
             by_printing[(set_code.lower(), collector.lower())] = entry
-    return DeckCards(by_name=by_name, by_printing=by_printing)
+    return DeckCards(by_name=by_name, by_printing=by_printing, character_names=character_names)
 
 
 def require_in_deck(link_text: str, cards: DeckCards, issues: list[Issue]) -> None:
@@ -180,6 +201,17 @@ def check_scryfall_link(link_text: str, url: str, parsed: urllib.parse.ParseResu
             deck_name, deck_set, deck_number = entry
             if normalize_name(link_text) == normalize_name(deck_name) or is_shortened_name_match(link_text, deck_name):
                 matched_by_printing = True
+            elif is_character_name_match(link_text, deck_name):
+                sharers = cards.character_names.get(normalize_name(character_name(deck_name)), [])
+                if len(set(sharers)) > 1:
+                    issues.append(Issue(
+                        "ERROR",
+                        f"Ambiguous character name: [{link_text}]({url}) could be any of "
+                        f"{', '.join(sorted(set(sharers)))} in this decklist. Use a fuller "
+                        "name (or the card's epithet) to say which one it is.",
+                    ))
+                else:
+                    matched_by_printing = True
             else:
                 issues.append(Issue(
                     "ERROR",
