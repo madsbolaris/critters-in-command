@@ -28,6 +28,11 @@ the same folder):
   99 — fix the README (link the real card) or fix the decklist (the card
   belongs in the deck) rather than treating it as a harmless namedrop.
 
+Also reported, as a non-fatal ``INFO`` diagnostic, is the reverse gap: cards
+that are in the decklist but never get a mention in the README at all (basic
+lands excluded). This never fails the run — it's just a coverage list to help
+when writing or reworking a deck's flavor text.
+
 Usage:
     python scripts/check_readmes.py                  # every deck
     python scripts/check_readmes.py baylen bumbleflower  # by folder-name substring
@@ -210,6 +215,19 @@ def check_readme(readme_path: Path, deck_dir: Path, cards: DeckCards) -> list[Is
     return issues
 
 
+BASIC_LAND_NAMES = {"plains", "island", "swamp", "mountain", "forest", "wastes"}
+
+
+def find_uncovered_cards(readme_text: str, cards: DeckCards) -> list[str]:
+    """Decklist cards (basic lands excluded) that no README link mentions by name."""
+    covered = {normalize_name(match.group(1)) for match in LINK_RE.finditer(readme_text)}
+    uncovered = [
+        raw_name for normalized, (raw_name, _set, _number) in cards.by_name.items()
+        if normalized not in covered and normalized not in BASIC_LAND_NAMES
+    ]
+    return sorted(uncovered, key=str.lower)
+
+
 def discover_decks() -> list[Path]:
     return sorted(
         {dck.parent for dck in DECKS_DIR.rglob("decklist.dck") if (dck.parent / "README.md").exists()}
@@ -237,7 +255,9 @@ def main() -> int:
     had_errors = False
     for deck_dir in deck_dirs:
         cards = parse_decklist(deck_dir / "decklist.dck")
-        issues = check_readme(deck_dir / "README.md", deck_dir, cards)
+        readme_path = deck_dir / "README.md"
+        issues = check_readme(readme_path, deck_dir, cards)
+        uncovered = find_uncovered_cards(readme_path.read_text(encoding="utf-8"), cards)
 
         errors = [i for i in issues if i.level == "ERROR"]
         warnings = [i for i in issues if i.level == "WARNING"]
@@ -245,14 +265,15 @@ def main() -> int:
             errors, warnings = errors + warnings, []
 
         rel = deck_dir.relative_to(REPO_DIR)
-        if errors or warnings:
-            print(f"\n{rel}")
-            for issue in errors:
-                print(f"  ERROR: {issue.message}")
-            for issue in warnings:
-                print(f"  WARNING: {issue.message}")
-        else:
-            print(f"{rel}: OK")
+        print(f"\n{rel}")
+        if not errors and not warnings:
+            print("  OK")
+        for issue in errors:
+            print(f"  ERROR: {issue.message}")
+        for issue in warnings:
+            print(f"  WARNING: {issue.message}")
+        if uncovered:
+            print(f"  INFO: {len(uncovered)} deck card(s) not mentioned in the README: {', '.join(uncovered)}")
 
         had_errors = had_errors or bool(errors)
 

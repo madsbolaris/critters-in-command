@@ -57,6 +57,32 @@ class ParseDecklistTests(unittest.TestCase):
         self.assertEqual(cards.by_name, {})
 
 
+class FindUncoveredCardsTests(unittest.TestCase):
+    def setUp(self):
+        self._tmpdir = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmpdir.cleanup)
+        self.cards = check_readmes.parse_decklist(write_dck(Path(self._tmpdir.name)))
+
+    def test_mentioned_cards_are_not_reported(self):
+        text = "[Caretaker's Talent](https://scryfall.com/card/blb/6/caretakers-talent) keeps everyone fed."
+        uncovered = check_readmes.find_uncovered_cards(text, self.cards)
+        self.assertNotIn("Caretaker's Talent", uncovered)
+
+    def test_unmentioned_nonland_cards_are_reported(self):
+        uncovered = check_readmes.find_uncovered_cards("No links here.", self.cards)
+        self.assertIn("The Great Henge", uncovered)
+        self.assertIn("Caretaker's Talent", uncovered)
+
+    def test_basic_lands_are_excluded(self):
+        uncovered = check_readmes.find_uncovered_cards("No links here.", self.cards)
+        self.assertNotIn("Forest", uncovered)
+
+    def test_smart_quote_mentions_still_count_as_covered(self):
+        text = "[Caretaker\u2019s Talent](https://scryfall.com/card/blb/6/caretakers-talent) keeps everyone fed."
+        uncovered = check_readmes.find_uncovered_cards(text, self.cards)
+        self.assertNotIn("Caretaker's Talent", uncovered)
+
+
 class CheckScryfallLinkTests(unittest.TestCase):
     def setUp(self):
         self._tmpdir = tempfile.TemporaryDirectory()
