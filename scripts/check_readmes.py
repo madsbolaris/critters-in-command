@@ -20,7 +20,9 @@ the same folder):
   number) is used by a *different* card in the decklist, that's a hard
   error — it means the story text and the decklist disagree about what that
   Scryfall page actually is (a real bug, e.g. a copy/paste or collector
-  number typo).
+  number typo). Link text may be shortened to the card name's trailing
+  word(s) (e.g. "Tutelage" for "Teferi's Tutelage") since the set/number
+  already pins down the exact card unambiguously.
 * Any external link outside of scryfall.com / deckcheck.co is flagged as a
   warning (not necessarily wrong, just worth a human look).
 * A card named in the README that isn't found anywhere in the decklist (by
@@ -91,6 +93,20 @@ def normalize_name(name: str) -> str:
     return " ".join(name.split()).strip().lower()
 
 
+def is_shortened_name_match(link_text: str, deck_name: str) -> bool:
+    """Allow link text that's just the trailing word(s) of the real card name.
+
+    e.g. "Tutelage" matches "Teferi's Tutelage". Only called once a /card/<set>/<num>
+    link has already pinned the exact printing to one deck card, so there's no
+    ambiguity about which card the shortened text refers to.
+    """
+    link_words = normalize_name(link_text).split(" ")
+    deck_words = normalize_name(deck_name).split(" ")
+    if not link_words or len(link_words) > len(deck_words):
+        return False
+    return deck_words[-len(link_words):] == link_words
+
+
 @dataclass(frozen=True)
 class Issue:
     level: str  # "ERROR" or "WARNING"
@@ -150,6 +166,7 @@ def check_scryfall_link(link_text: str, url: str, parsed: urllib.parse.ParseResu
         issues.append(Issue("ERROR", f"Malformed scryfall.com link (no path): {url}"))
         return issues
 
+    matched_by_printing = False
     if path_parts[0] == "card":
         if len(path_parts) < 3:
             issues.append(Issue("ERROR", f"Malformed scryfall card link (missing set/number): {url}"))
@@ -161,7 +178,9 @@ def check_scryfall_link(link_text: str, url: str, parsed: urllib.parse.ParseResu
         entry = cards.by_printing.get((set_code, number))
         if entry is not None:
             deck_name, deck_set, deck_number = entry
-            if normalize_name(link_text) != normalize_name(deck_name):
+            if normalize_name(link_text) == normalize_name(deck_name) or is_shortened_name_match(link_text, deck_name):
+                matched_by_printing = True
+            else:
                 issues.append(Issue(
                     "ERROR",
                     f"Printing collision: [{link_text}]({url}) points to {set_code}/{number}, "
@@ -177,7 +196,8 @@ def check_scryfall_link(link_text: str, url: str, parsed: urllib.parse.ParseResu
     else:
         issues.append(Issue("ERROR", f"Unrecognized scryfall.com link shape (expected /card/ or /search): {url}"))
 
-    require_in_deck(link_text, cards, issues)
+    if not matched_by_printing:
+        require_in_deck(link_text, cards, issues)
     return issues
 
 

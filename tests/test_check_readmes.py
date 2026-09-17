@@ -41,6 +41,20 @@ class NormalizeNameTests(unittest.TestCase):
         self.assertEqual(check_readmes.normalize_name("  Sol   Ring "), "sol ring")
 
 
+class IsShortenedNameMatchTests(unittest.TestCase):
+    def test_trailing_word_matches(self):
+        self.assertTrue(check_readmes.is_shortened_name_match("Tutelage", "Teferi's Tutelage"))
+
+    def test_leading_word_does_not_match(self):
+        self.assertFalse(check_readmes.is_shortened_name_match("Teferi's", "Teferi's Tutelage"))
+
+    def test_unrelated_word_does_not_match(self):
+        self.assertFalse(check_readmes.is_shortened_name_match("Sphinx", "Teferi's Tutelage"))
+
+    def test_full_name_matches(self):
+        self.assertTrue(check_readmes.is_shortened_name_match("Teferi's Tutelage", "Teferi's Tutelage"))
+
+
 class ParseDecklistTests(unittest.TestCase):
     def test_parses_names_and_printings(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -188,6 +202,15 @@ class CheckScryfallLinkTests(unittest.TestCase):
     def test_unrecognized_scryfall_path_is_an_error(self):
         issues = self._check("Sol Ring", "https://scryfall.com/sets/blb")
         self.assertTrue(any("Unrecognized scryfall.com link shape" in i.message for i in issues))
+
+    def test_shortened_trailing_word_link_text_is_allowed(self):
+        issues = self._check("Talent", "https://scryfall.com/card/blb/6/caretakers-talent")
+        self.assertEqual(issues, [])
+
+    def test_shortened_link_text_still_requires_trailing_words(self):
+        issues = self._check("Caretaker's", "https://scryfall.com/card/blb/6/caretakers-talent")
+        errors = [i for i in issues if i.level == "ERROR"]
+        self.assertTrue(any("Printing collision" in i.message for i in errors))
 
 
 class CheckLinkTests(unittest.TestCase):
