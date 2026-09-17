@@ -8,13 +8,13 @@ In this shell, **a Food is 3 stored life on demand — and this deck turns life 
 
 - **Food → counters:** crack a Food, gain 3 life, and **Heliod** turns each point into a +1/+1 counter (doubled by Branching Evolution / Innkeeper's Talent) — every course leaves the table a little plumper.
 - **Food → board:** **Archangel of Thune** pumps your whole team every time you gain, blessing every guest still seated with rude, roaring health.
-- **Food → cards:** **Academy Manufactor** makes every Food *also* a Clue and a Treasure, and **Peregrin Took** turns three spare Foods into a drawn card — the kitchen never rests.
+- **Tokens → cards:** the table's constant stream of new guests keeps the cards flowing — **Welcoming Vampire** and **Caretaker's Talent** each draw a card the turn a small guest arrives, **Staff of the Storyteller** banks a draw off every batch of tokens, and **Skullclamp** turns spare 1/1s into a pair of cards. The kitchen never rests.
 - **Food ↔ Kitchen Finks:** every trip through the kitchen, **Kitchen Finks** comes back gaining 2 more life — a fresh Heliod counter each time — and with **Heliod** plus a free sac outlet (**Ashnod's Altar**) its persist loops forever. Self-feeding — more mouths, more dishes, more mouths.
 - **The doublers pull double duty:** Doubling Season and Anointed Procession double your **creatures, your Food, and (Doubling Season) your counters** all at once — twice the guests and twice the spread.
 
 Then **Finneas** showers the whole crowd with counters each attack, and the game ends on a counter-swollen lifelink board, the **Heliod + Spike Feeder + Archangel of Thune** infinite, or **Mycoloth** — the Cordyceps Rat King — devouring the fattened guests whole. Not everybunny leaves.
 
-**Legality:** every card is Commander-legal and within Finneas's **G/W** color identity (colorless cards like Sol Ring, Academy Manufactor, and Skullclamp are fine).
+**Legality:** every card is Commander-legal and within Finneas's **G/W** color identity (colorless cards like Sol Ring, Ashnod's Altar, and Skullclamp are fine).
 
 The `Core?` column flags the load-bearing engine pieces (they sort first within their color/type group in the mosaic); `Food?` flags the dishes on the table.
 
@@ -54,8 +54,6 @@ The `Core?` column flags the load-bearing engine pieces (they sort first within 
 |------|----------|-------|-------|------|
 | Gilded Goose | [🔗](https://scryfall.com/card/blc/83) |  | 🍎 | A one-drop that lays a golden egg (a Food) and taps it for any color — ramp, fixing, and the first course on the table. Blessed early, devoured later. |
 | Tireless Provisioner | [🔗](https://scryfall.com/card/ltc/262) | ✅ | 🍎 | Every land you drop cooks up a Food or Treasure — La Abuela keeping the platters full while she ramps and fixes. |
-| Academy Manufactor | [🔗](https://scryfall.com/card/otc/251) | ✅ | 🍎 | The head cook in the brigade: every Food you'd make becomes a Food, a Clue, AND a Treasure — life, cards, and mana off a single dish. |
-| Peregrin Took | [🔗](https://scryfall.com/card/ltr/181) |  | 🍎 | Every token you make comes with a Food on the side — a little something extra always coming — and three Foods draw a card. |
 | Carrot Cake | [🔗](https://scryfall.com/card/blb/7) |  | 🍎 | A Food waiting beneath a glass dome: makes a 1/1 Rabbit and scries on the way in AND when sacrificed — a Finneas target, doubled under the Processions. |
 | Of Herbs and Stewed Rabbit | [🔗](https://scryfall.com/card/ltc/17) |  | 🍎 | The pot simmering at the center of the table. A Saga of pure value: a counter and a Food, then a card and a Food, then a Halfling token for every Food you control. Nobody asks which rabbit. |
 
@@ -64,7 +62,6 @@ The `Core?` column flags the load-bearing engine pieces (they sort first within 
 | Card | Scryfall | Core? | Food? | Role |
 |------|----------|-------|-------|------|
 | High Market | [🔗](https://scryfall.com/card/soc/380) |  |  | A free sacrifice outlet on a land: guests sent through the kitchen come back as provisions — eat a counter-creature to bank its counters on the Ozolith, gaining a life for Heliod on the way. |
-| Witch's Oven | [🔗](https://scryfall.com/card/eld/237) |  | 🍎 | The butcher's oven: sacrifice a creature for a Food — two if it had 4+ toughness, easy once it's counter-swollen. The Ozolith banks the counters; the Food feeds Heliod. |
 | Ashnod's Altar | [🔗](https://scryfall.com/card/cmm/368) | ✅ |  | The literal altar at the center of the kitchen: sacrifice any guest for two colorless mana, free and unlimited. It banks the Ozolith's counters, fuels Mycoloth's Devour, and turns the Scurry Oak + Rosie Cotton infinite into infinite mana. The centerpiece the whole feast was arranged around. |
 
 ## Rabbits & Token Makers
@@ -72,14 +69,13 @@ The `Core?` column flags the load-bearing engine pieces (they sort first within 
 | Card | Scryfall | Core? | Food? | Role |
 |------|----------|-------|-------|------|
 | Trostani, Selesnya's Voice | [🔗](https://scryfall.com/card/rtr/206) | ✅ |  | Populate to copy your best token, and gain life equal to each creature's toughness — she reassures the nervous while quietly filling the tables. Width and Heliod fuel in a single card. |
-| Emmara, Soul of the Accord | [🔗](https://scryfall.com/card/grn/168) |  |  | Tap her — by attacking or convoking a spell — to make a 1/1 lifelink Soldier every turn, filling the tables with fresh guests; a repeatable token engine whose lifelink pours into Heliod, Archangel, and the Pridemate. |
-| Quina, Qu Gourmet | [🔗](https://scryfall.com/card/fin/194) |  |  | Peregrin Took's twin — every token you make also makes a 1/1 Frog, and you can sacrifice a Frog to grow her. Creature fodder for Finneas, Cathars', and the Ozolith, and a gluttonous gourmand right at home at the feast. |
+| Quina, Qu Gourmet | [🔗](https://scryfall.com/card/fin/194) |  |  | A gluttonous gourmand at the head of the table: every token you make also makes a 1/1 Frog, and you can sacrifice a Frog to grow her. Creature fodder for Finneas, Cathars', and the Ozolith, right at home at the feast. |
 | Warren Warleader | [🔗](https://scryfall.com/card/blb/38) |  |  | A Rabbit that makes a tapped-and-attacking Rabbit token every combat (or pumps the team) — directly rewarding Finneas swinging. |
 | Jacked Rabbit | [🔗](https://scryfall.com/card/blc/9) |  |  | Enters loaded with +1/+1 counters and makes Rabbit tokens equal to its power on attack — a counter magnet that snowballs into an army. |
 | Enduring Vitality | [🔗](https://scryfall.com/card/dsk/176) |  |  | The undying spirit of the harvest — every creature at the table taps for mana of any color, so the whole guest list becomes fuel, and even when the feast is swept clean it claws back as an enchantment still humming. Any-color fixing that survives the board wipes a Selesnya kitchen fears. |
 | Scurry Oak | [🔗](https://scryfall.com/card/mh2/172) |  |  | The oak the whole feast is laid out beneath. Evolve grows it as bigger creatures arrive, and every time it gains a +1/+1 counter it spits out a 1/1 Squirrel — with Cathars', Branching Evolution, and the doublers it floods tokens and counters together. |
 | Herd Baloth | [🔗](https://scryfall.com/card/mh2/165) |  |  | A big green beast that shows up hungry — every time it takes a +1/+1 counter it stampedes out a 4/4, and under Cathars' Crusade (a counter on it per creature ETB) that's an *infinite* herd of Beasts, each arrival pumping the whole feast. A combo the kitchen can now find. |
-| Placid Rottentail | [🔗](https://scryfall.com/card/mom/199) |  |  | The thing staring back from the pantry. A one-mana vigilance Rabbit (Finneas counters it natively), and from the graveyard pay {2}{G} to exile it for two +1/+1 counters — counter value even after it's been sent through Witch's Oven or High Market. |
+| Placid Rottentail | [🔗](https://scryfall.com/card/mom/199) |  |  | The thing staring back from the pantry. A one-mana vigilance Rabbit (Finneas counters it natively), and from the graveyard pay {2}{G} to exile it for two +1/+1 counters — counter value even after it's been sent through High Market or Ashnod's Altar. |
 | Mycoloth | [🔗](https://scryfall.com/card/sld/2205) | ✅ |  | The Cordyceps Rat King, climbing up from the cellar to take his seat at the head of the table. Devour your spare guests as it enters — sacrifice tokens for double the +1/+1 counters (the Ozolith banks theirs) — then it spawns a Saproling per counter every upkeep. The doublers make it monstrous. Not everybunny leaves. |
 | Hop to It | [🔗](https://scryfall.com/card/blb/16) |  |  | Three 1/1 Rabbit tokens in one card — instant Finneas fodder, doubler fuel, and Devour snacks for Mycoloth. |
 | March of the Multitudes | [🔗](https://scryfall.com/card/ncc/346) |  |  | Convoke out X 1/1 lifelink Soldiers from an empty board, then populate every time a creature enters the rest of the turn — a token *starter* that snowballs, and the lifelink pours into Heliod, Archangel, and the Pridemate. |
@@ -96,7 +92,7 @@ The `Core?` column flags the load-bearing engine pieces (they sort first within 
 | Card | Scryfall | Core? | Food? | Role |
 |------|----------|-------|-------|------|
 | Cathars' Crusade | [🔗](https://scryfall.com/card/inr/17) | ✅ |  | Hospitality curdled into holy war — a crusade against empty stomachs, modest portions, and sensible limits. Every guest who arrives (a creature entering) fattens the entire table with a +1/+1 counter, and beneath the token flood the whole feast swells out of all control. |
-| Rosie Cotton of South Lane | [🔗](https://scryfall.com/card/ltr/27) | ✅ |  | Plates food faster than anyone can eat it: a Food on ETB, then a +1/+1 counter on a creature every time you create a token — and you make tokens constantly (each Food, each Clue/Treasure off Academy Manufactor, each Rabbit). |
+| Rosie Cotton of South Lane | [🔗](https://scryfall.com/card/ltr/27) | ✅ |  | Plates food faster than anyone can eat it: a Food on ETB, then a +1/+1 counter on a creature every time you create a token — and you make tokens constantly (each Food, each Treasure, each Rabbit). |
 | Branching Evolution | [🔗](https://scryfall.com/card/mh3/285) |  |  | Doubles every +1/+1 counter you place. |
 | Kodama of the West Tree | [🔗](https://scryfall.com/card/neo/199) |  |  | Reach, and your modified (counter-bearing) creatures gain trample; whenever one connects, ramp a basic onto the battlefield — hiding the operation's routes beneath the roots and turning your counter army into damage and mana. |
 | The Ozolith | [🔗](https://scryfall.com/card/piko/237p) | ✅ |  | When a guest goes through the kitchen, the Ozolith moves their counters onto whoever's still seated — banks every +1/+1 counter from creatures that die and dumps the pile onto a creature each turn, so your counters survive a wipe. |
@@ -113,6 +109,7 @@ The `Core?` column flags the load-bearing engine pieces (they sort first within 
 | Soul's Attendant | [🔗](https://scryfall.com/card/roe/44) |  |  | A one-mana per-creature lifegain trigger fussing over every guest, stacking with Hinterland Sanctifier so each token pings life several times over. |
 | Case of the Uneaten Feast | [🔗](https://scryfall.com/card/mkm/10) |  |  | The mystery that begins when a guest spots what's in the pantry and bolts into the night. A Soul Sister on a resilient enchantment body: gain a life per creature ETB, trivially solved for 5+ life a turn, then sac it to recast your dead creatures from the graveyard. |
 | Hinterland Sanctifier | [🔗](https://scryfall.com/card/fdn/730) |  |  | The Rabbit soul-sister, fussing over each new arrival: life whenever a creature enters, on a body Finneas actually counters. |
+| Trelasarra, Moon Dancer | [🔗](https://scryfall.com/card/afr/236/trelasarra-moon-dancer) |  |  | A {G}{W} two-drop lifegain payoff: every point of lifegain grows her with a +1/+1 counter and scrys, so she snowballs off the soul-sisters, Heliod, Archangel, and the whole lifelink crowd. |
 | Spike Feeder | [🔗](https://scryfall.com/card/cmd/172) | ✅ |  | Already found its way into the fruit bowl: two counters to gain life; with Heliod that lifegain becomes counters — an infinite-life engine (and infinite counters with Archangel). |
 | Innkeeper's Talent | [🔗](https://scryfall.com/card/blb/180/innkeepers-talent) |  |  | A leveling counters Class: a +1/+1 counter each combat, then ward {1} on all your counter-permanents, then it doubles every counter you place (stacking with Branching Evolution). |
 
@@ -125,6 +122,8 @@ The `Core?` column flags the load-bearing engine pieces (they sort first within 
 | Skullclamp | [🔗](https://scryfall.com/card/blc/283) |  |  | The clamp hanging beside the butcher's block, and not decorative: equip a 1/1 token, it dies, draw two — turns spare guests into a card faucet. |
 | Caretaker's Talent | [🔗](https://scryfall.com/card/blb/6) |  |  | Keeps the service polished and the supply of helping paws inexhaustible: a Class that draws a card whenever tokens enter (once a turn) and copies a token at level 2 — a token-deck card engine that also widens the board. |
 | Stocking the Pantry | [🔗](https://scryfall.com/card/blb/194) |  |  | Keeps the larder endlessly replenished: a one-mana engine that banks a supply counter whenever you put +1/+1 counters on a creature (which is constantly here), then pay {2} per counter to draw — the counter machine becomes a card faucet. |
+| Welcoming Vampire | [🔗](https://scryfall.com/card/tdc/140) |  |  | The maître d' greeting every arrival by name: a 2/3 flyer that draws a card each turn a small guest (a power-2-or-less token or creature) sits down — turning the deck's constant token flood into a steady stream of cards. |
+| Staff of the Storyteller | [🔗](https://scryfall.com/card/soc/111) |  |  | The guest book that never fills: makes a 1/1 flying Spirit on arrival, then banks a story counter with every batch of creature tokens, cashed for cards on demand — card advantage that scales with how wide the table gets. |
 
 ## Removal & Interaction
 
@@ -153,7 +152,7 @@ The `Core?` column flags the load-bearing engine pieces (they sort first within 
 
 | Card | Scryfall | Core? | Food? | Role |
 |------|----------|-------|-------|------|
-| Enlightened Tutor | [🔗](https://scryfall.com/card/dmr/6) |  |  | Finds Doubling Season, Cathars' Crusade, Academy Manufactor, Skullclamp, or a combo piece. |
+| Enlightened Tutor | [🔗](https://scryfall.com/card/dmr/6) |  |  | Finds Doubling Season, Cathars' Crusade, The Ozolith, Skullclamp, or a combo piece. |
 | Idyllic Tutor | [🔗](https://scryfall.com/card/thb/24) |  |  | Finds any enchantment — usually a doubler, Cathars', or Trail of Crumbs. |
 | Survival of the Fittest | [🔗](https://scryfall.com/card/exo/129/survival-of-the-fittest) | ✅ |  | The kitchen's standing order, every turn: pitch a spare guest to the pot and send out for exactly the creature the recipe calls for — Scurry Oak, Rosie Cotton, Spike Feeder, or Heliod. A repeatable engine that finally makes the two combos *findable*. |
 | Chord of Calling | [🔗](https://scryfall.com/card/rvr/134/chord-of-calling) |  |  | Ring the dinner bell — convoke (the whole table pitches in) to call any creature straight onto the battlefield at instant speed, whether that's the missing combo half or a surprise blocker. |
@@ -178,13 +177,14 @@ The `Core?` column flags the load-bearing engine pieces (they sort first within 
 | Mana Confluence | [🔗](https://scryfall.com/card/jou/163) |  |  | Any-color fixing on demand. |
 | Gaea's Cradle | [🔗](https://scryfall.com/card/usg/321) |  |  | Taps for green per creature — a wide board makes a flood. |
 | Field of the Dead | [🔗](https://scryfall.com/card/m20/247) |  |  | Once you control seven differently-named lands, every land you drop makes a 2/2 Zombie — the grounds never run short of fresh bodies for Finneas to counter, feeding Cathars', the Ozolith, the Soul Sisters, and March populate. Your near-singleton manabase turns it on fast. |
-| Serra's Sanctum | [🔗](https://scryfall.com/card/usg/325) |  |  | Taps for {W} per enchantment you control — with your stack of enchantments (Doubling Season, Cathars', the Processions, Case, Innkeeper's) it's explosive white mana. |
+| Nykthos, Shrine to Nyx | [🔗](https://scryfall.com/card/ths/223/nykthos-shrine-to-nyx) |  |  | Taps for {C}, then activates for a flood of {G} or {W} equal to your devotion — a wide creature board plus the green/white pips on Heliod, the Processions, and Cathars' pours out big mana. Scales with the go-wide plan instead of an enchantment count. |
 | Ancient Tomb | [🔗](https://scryfall.com/card/uma/236) |  |  | Explosive colorless ramp for fast starts. |
 | Gavony Township | [🔗](https://scryfall.com/card/moc/406) |  |  | A land that counters up the whole crowd at instant speed. |
 | Razorverge Thicket | [🔗](https://scryfall.com/card/msc/259) |  |  | An untapped G/W source in the opening turns — smooths the double-white on Heliod and Archangel right when color screw bites, and keeps a fresh land name for Field of the Dead. |
 | Oakhollow Village | [🔗](https://scryfall.com/card/blb/258) |  |  | A Rabbit-matters land: {G} to put a +1/+1 counter on each Frog/Rabbit/Raccoon/Squirrel that entered this turn. |
 | Boseiju, Who Endures | [🔗](https://scryfall.com/card/neo/266) |  |  | Answers artifacts, enchantments, and lands — free interaction on a land. |
 | Eiganjo, Seat of the Empire | [🔗](https://scryfall.com/card/neo/268) |  |  | A land that shoots a creature — removal you never draw as a spell. |
+| Sungrass Prairie | [🔗](https://scryfall.com/card/msc/270/sungrass-prairie) |  |  | Untapped G/W filter land — turns a spare land into the double-white for Heliod and Archangel, and keeps a fresh land name for Field of the Dead. |
 
 ---
 
@@ -206,8 +206,8 @@ Swap every **Swap out** card for its paired **Swap in** to drop this Bracket 4 b
 | Wayfarer's Bauble | [🔗](https://scryfall.com/card/40k/261★/wayfarers-bauble) | Chrome Mox *(GC)* | Ramp + fixing. |
 | Burrowguard Mentor | [🔗](https://scryfall.com/card/blb/206/burrowguard-mentor) | Farewell *(GC)* | Rabbit token + anthem (go-wide runs no symmetric wipe). |
 | Castle Ardenvale | [🔗](https://scryfall.com/card/tdc/346/castle-ardenvale) | Field of the Dead *(GC — land)* | Token-making land. |
-| Krosan Verge | [🔗](https://scryfall.com/card/mkc/271/krosan-verge) | Serra's Sanctum *(GC — land)* | Ramp land (fetches Forest + Plains). |
-| Sungrass Prairie | [🔗](https://scryfall.com/card/msc/270/sungrass-prairie) | Ancient Tomb *(GC — land)* | Untapped G/W filter land. |
+| Krosan Verge | [🔗](https://scryfall.com/card/mkc/271/krosan-verge) | Crop Rotation *(GC)* | Ramp land (fetches Forest + Plains). |
+| Bonders' Enclave | [🔗](https://scryfall.com/card/otc/274/bonders-enclave) | Ancient Tomb *(GC — land)* | Pay-to-draw card-advantage land. |
 | Conclave Mentor | [🔗](https://scryfall.com/card/plst/M21-216/conclave-mentor) | Spike Feeder *(2-card combo)* | Fair counter payoff — breaks Heliod + Spike Feeder. |
 | Good-Fortune Unicorn | [🔗](https://scryfall.com/card/fdn/240/good-fortune-unicorn) | Scurry Oak *(2-card combo)* | Counter on each token — breaks Scurry Oak + Rosie Cotton. |
-| Trelasarra, Moon Dancer | [🔗](https://scryfall.com/card/afr/236/trelasarra-moon-dancer) | Herd Baloth *(2-card combo)* | Lifegain → counter — breaks Herd Baloth + Cathars' Crusade. |
+| Scavenging Ooze | [🔗](https://scryfall.com/card/pdp14/3/scavenging-ooze) | Herd Baloth *(2-card combo)* | Grows on +1/+1 counters and gains life — a fair beater (plus graveyard hate) that replaces the combo piece. |
