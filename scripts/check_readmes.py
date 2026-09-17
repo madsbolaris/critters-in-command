@@ -36,6 +36,11 @@ the same folder):
   check also accepts the character-name shorthand described above (e.g. a
   ``/search`` link's text can be "Teferi" for "Teferi, Time Raveler"), with
   the same ambiguity error when more than one deck card shares that name.
+* Every deck's featured "thematic borderless" cards — the ones pinned to the
+  front of its generated mosaic via ``[mosaic_order]`` in ``deckcheck.toml``
+  — must be **bolded** wherever the README links to them (e.g.
+  ``**[Wedding Ring](...)**``). A matching link that isn't wrapped in ``**``
+  is a hard error.
 
 Also reported, as a non-fatal ``INFO`` diagnostic, is the reverse gap: cards
 that are in the decklist but never get a mention in the README at all (basic
@@ -66,6 +71,7 @@ import argparse
 import json
 import re
 import sys
+import tomllib
 import unicodedata
 import urllib.parse
 from dataclasses import dataclass
@@ -76,6 +82,7 @@ DECKS_DIR = REPO_DIR / "decks"
 CACHE_DIR = REPO_DIR / "scripts" / ".cache"
 BULK_FILE = CACHE_DIR / "scryfall_default_cards.json"
 TYPE_INDEX_FILE = CACHE_DIR / "card_type_index.json"
+DECKCHECK_CONFIG = REPO_DIR / "deckcheck.toml"
 
 ALLOWED_EXTERNAL_DOMAINS = {"scryfall.com", "deckcheck.co"}
 
@@ -272,7 +279,55 @@ def check_link(link_text: str, url: str, deck_dir: Path, cards: DeckCards) -> li
     return []
 
 
-def check_readme(readme_path: Path, deck_dir: Path, cards: DeckCards) -> list[Issue]:
+def load_mosaic_order() -> dict[Path, list[str]]:
+    """Deck directory -> its featured card names, from ``[mosaic_order]`` in
+    ``deckcheck.toml``. These are the deck's thematic borderless/showcase
+    treatments pinned to the front of its generated mosaic, and every README
+    mention of them must be bolded.
+    """
+    if not DECKCHECK_CONFIG.exists():
+        return {}
+    with DECKCHECK_CONFIG.open("rb") as config_file:
+        config = tomllib.load(config_file)
+    mosaic_order = config.get("mosaic_order", {})
+    paths = config.get("paths", {})
+    result: dict[Path, list[str]] = {}
+    for slug, names in mosaic_order.items():
+        relative = paths.get(slug)
+        if not relative:
+            continue
+        result[DECKS_DIR / relative] = list(names)
+    return result
+
+
+def check_featured_cards_are_bold(text: str, featured_names: list[str]) -> list[Issue]:
+    """Every README link to one of the deck's featured mosaic_order cards must be
+    wrapped in ``**bold**`` (e.g. ``**[Wedding Ring](...)**``) so these thematic
+    borderless treatments stand out from the rest of the story text.
+    """
+    issues: list[Issue] = []
+    for match in LINK_RE.finditer(text):
+        link_text = match.group(1)
+        for name in featured_names:
+            if not (normalize_name(link_text) == normalize_name(name)
+                    or is_shortened_name_match(link_text, name)
+                    or is_character_name_match(link_text, name)):
+                continue
+            before = text[max(0, match.start() - 2):match.start()]
+            after = text[match.end():match.end() + 2]
+            if before != "**" or after != "**":
+                issues.append(Issue(
+                    "ERROR",
+                    f"[{link_text}]({match.group(2)}) refers to '{name}', one of this deck's "
+                    "featured cards (mosaic_order in deckcheck.toml) — wrap it in bold: "
+                    f"**[{link_text}]({match.group(2)})**.",
+                ))
+            break
+    return issues
+
+
+def check_readme(readme_path: Path, deck_dir: Path, cards: DeckCards,
+                  featured_names: list[str] | None = None) -> list[Issue]:
     issues: list[Issue] = []
     text = readme_path.read_text(encoding="utf-8")
 
@@ -294,6 +349,9 @@ def check_readme(readme_path: Path, deck_dir: Path, cards: DeckCards) -> list[Is
 
     for match in matches:
         issues.extend(check_link(match.group(1), match.group(2), deck_dir, cards))
+
+    if featured_names:
+        issues.extend(check_featured_cards_are_bold(text, featured_names))
 
     return issues
 
@@ -466,6 +524,7 @@ def main() -> int:
 
     # Card-uniqueness counts always span the whole repo, independent of any --decks filter below.
     global_card_counts = build_global_card_counts(deck_dirs)
+    mosaic_order = load_mosaic_order()
 
     type_index = load_type_index()
     if type_index is None:
@@ -484,7 +543,7 @@ def main() -> int:
     for deck_dir in deck_dirs:
         cards = parse_decklist(deck_dir / "decklist.dck")
         readme_path = deck_dir / "README.md"
-        issues = check_readme(readme_path, deck_dir, cards)
+        issues = check_readme(readme_path, deck_dir, cards, mosaic_order.get(deck_dir))
         uncovered = find_uncovered_cards(readme_path.read_text(encoding="utf-8"), cards, global_card_counts)
 
         errors = [i for i in issues if i.level == "ERROR"]

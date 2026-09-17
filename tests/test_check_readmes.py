@@ -195,6 +195,40 @@ class RequireInDeckTests(unittest.TestCase):
         self.assertTrue(any("Ambiguous character name" in i.message for i in errors))
 
 
+class CheckFeaturedCardsAreBoldTests(unittest.TestCase):
+    def test_bolded_featured_link_has_no_issues(self):
+        text = "The **[Wedding Ring](https://scryfall.com/card/who/1059)** gleams.\n"
+        issues = check_readmes.check_featured_cards_are_bold(text, ["Wedding Ring"])
+        self.assertEqual(issues, [])
+
+    def test_unbolded_featured_link_is_an_error(self):
+        text = "The [Wedding Ring](https://scryfall.com/card/who/1059) gleams.\n"
+        issues = check_readmes.check_featured_cards_are_bold(text, ["Wedding Ring"])
+        self.assertEqual(len(issues), 1)
+        self.assertEqual(issues[0].level, "ERROR")
+        self.assertIn("wrap it in bold", issues[0].message)
+
+    def test_shortened_link_text_to_a_featured_card_must_also_be_bold(self):
+        text = "He hides under his [Tutelage](https://scryfall.com/card/m21/78).\n"
+        issues = check_readmes.check_featured_cards_are_bold(text, ["Teferi's Tutelage"])
+        self.assertEqual(len(issues), 1)
+
+    def test_non_featured_links_are_unaffected(self):
+        text = "A plain [Sol Ring](https://scryfall.com/card/lea/162) sits there.\n"
+        issues = check_readmes.check_featured_cards_are_bold(text, ["Wedding Ring"])
+        self.assertEqual(issues, [])
+
+
+class LoadMosaicOrderTests(unittest.TestCase):
+    def test_bumbleflower_featured_cards_are_configured(self):
+        mosaic_order = check_readmes.load_mosaic_order()
+        deck_dir = check_readmes.DECKS_DIR / "Somebunny Is Having a Party" / "Ms. Bumbleflower – Somebunny Said I Do"
+        self.assertEqual(
+            mosaic_order.get(deck_dir),
+            ["Wedding Ring", "Savor the Moment", "Smothering Tithe"],
+        )
+
+
 class ClassifyCardTypeTests(unittest.TestCase):
     def test_land_takes_priority_over_creature(self):
         self.assertEqual(check_readmes.classify_card_type("Land Creature — Tree"), "Land")
