@@ -17,7 +17,7 @@ so that every line ends up with a number.
 
 Usage:
     python scripts/dck_to_moxfield.py                             # all decks -> stdout
-    python scripts/dck_to_moxfield.py decks/baylen/decklist_b4.dck  # one deck -> stdout
+    python scripts/dck_to_moxfield.py path/to/decklist.dck          # one deck -> stdout
     python scripts/dck_to_moxfield.py --write                     # write <deck>_moxfield.txt
     python scripts/dck_to_moxfield.py --no-sideboard             # omit the sideboard
     python scripts/dck_to_moxfield.py --no-scryfall             # don't hit the network
@@ -101,9 +101,9 @@ def scryfall_lookup(name: str, set_code: str) -> tuple[str, str] | None:
     return result
 
 
-def parse_dck(path: Path) -> dict[str, list[tuple[int, str, str]]]:
-    """Return {section: [(count, name, dck_set), ...]}."""
-    sections: dict[str, list[tuple[int, str, str]]] = {
+def parse_dck(path: Path) -> dict[str, list[tuple[int, str, str, str]]]:
+    """Return {section: [(count, name, dck_set, dck_collector), ...]}."""
+    sections: dict[str, list[tuple[int, str, str, str]]] = {
         "commander": [], "main": [], "sideboard": [], "attractions": [],
     }
     current = None
@@ -120,8 +120,9 @@ def parse_dck(path: Path) -> dict[str, list[tuple[int, str, str]]]:
         parts = match.group(2).split("|")
         name = parts[0].strip()
         dck_set = parts[1].strip() if len(parts) > 1 else ""
+        dck_collector = parts[2].strip().strip("[]") if len(parts) > 2 else ""
         if name:
-            sections[current].append((int(match.group(1)), name, dck_set))
+            sections[current].append((int(match.group(1)), name, dck_set, dck_collector))
     return sections
 
 
@@ -129,7 +130,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Convert Forge .dck files to Moxfield set-code text with collector numbers.")
     parser.add_argument("files", nargs="*", type=Path,
-                        help="One or more .dck files (default: all decks/*/decklist_*.dck).")
+                        help="One or more .dck files (default: every decklist.dck under decks/).")
     parser.add_argument("--write", action="store_true",
                         help="Write <deck>_moxfield.txt next to each .dck instead of printing.")
     parser.add_argument("--no-sideboard", dest="sideboard", action="store_false",
@@ -138,7 +139,7 @@ def main() -> int:
                         help="Do not use the Scryfall API to fill missing collector numbers.")
     args = parser.parse_args()
 
-    files = args.files or sorted(REPO_DIR.glob("decks/*/decklist_*.dck"))
+    files = args.files or sorted((REPO_DIR / "decks").rglob("decklist.dck"))
     if not files:
         print("No .dck files found.", file=sys.stderr)
         return 1
@@ -146,7 +147,9 @@ def main() -> int:
     collectors: dict[str, tuple[str, str]] = {}
     _collector_cache: dict[Path, dict[str, tuple[str, str]]] = {}
 
-    def resolve(name: str, dck_set: str) -> tuple[str, str] | None:
+    def resolve(name: str, dck_set: str, dck_collector: str) -> tuple[str, str] | None:
+        if dck_set and dck_collector:
+            return dck_set.upper(), dck_collector
         hit = collectors.get(normalize(name))
         if hit:
             return hit
@@ -154,8 +157,8 @@ def main() -> int:
             return scryfall_lookup(name, dck_set)
         return None
 
-    def card_line(count: int, name: str, dck_set: str) -> str:
-        info = resolve(name, dck_set)
+    def card_line(count: int, name: str, dck_set: str, dck_collector: str) -> str:
+        info = resolve(name, dck_set, dck_collector)
         if info:
             set_code, collector = info
             return f"{count} {name} ({set_code}) {collector}"
@@ -171,9 +174,6 @@ def main() -> int:
         if host_dir not in _collector_cache:
             theme_path = find_theme_file(host_dir)
             loaded = load_collectors(theme_path) if theme_path else {}
-            if not loaded:
-                print(f"WARNING: no collector numbers found for {host_dir}.",
-                      file=sys.stderr)
             _collector_cache[host_dir] = loaded
         collectors = _collector_cache[host_dir]
 

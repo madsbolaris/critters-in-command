@@ -7,7 +7,7 @@ on:
     paths:
       - "decks/**/theme_analysis.md"
       - "decks/**/THEME_ANALYSIS.md"
-      - "decks/**/decklist_*.dck"
+      - "decks/**/decklist.dck"
       - "decks/**/party.toml"
       - "scripts/generate_mosaic.py"
   workflow_dispatch:
@@ -38,13 +38,13 @@ jobs:
 
       - name: Commit updated images
         run: |
-          if git diff --quiet -- 'decks/**/deck_mosaic_*.png' 'decks/**/deck_mosaic_*_preview.jpg' card_images; then
+          if git diff --quiet -- 'decks/**/deck_mosaic.png' 'decks/**/deck_mosaic_preview.jpg' card_images; then
             echo "No image updates to commit."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add 'decks/**/deck_mosaic_*.png' 'decks/**/deck_mosaic_*_preview.jpg' card_images
+          git add 'decks/**/deck_mosaic.png' 'decks/**/deck_mosaic_preview.jpg' card_images
           git commit -m "ci: update generated card images [skip ci]"
           git push

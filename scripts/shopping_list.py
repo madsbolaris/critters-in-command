@@ -41,6 +41,10 @@ from PIL import Image
 
 REPO = Path(__file__).parent.parent
 DECKS = ["baylen", "bumbleflower", "finneas"]
+with (REPO / "deckcheck.toml").open("rb") as config_file:
+    DECKCHECK = tomllib.load(config_file)
+DECK_PATHS = DECKCHECK.get("paths", {})
+MOSAIC_ORDER = DECKCHECK.get("mosaic_order", {})
 API = "https://api.scryfall.com"
 UA = "SomebunnyShoppingList/1.0 (personal deck tooling)"
 HEADERS = {"User-Agent": UA, "Accept": "application/json"}
@@ -68,7 +72,7 @@ STORAGE_THRESHOLD = 100.0
 # ---------------------------------------------------------------------------
 def parse_deck(host):
     """Return [(name, set, collector, qty), ...] for commander+main."""
-    path = REPO / f"decks/{host}/decklist_b4.dck"
+    path = REPO / "decks" / DECK_PATHS[host] / "decklist.dck"
     section = None
     rows = []
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -327,10 +331,11 @@ def load_exempt():
     for host in DECKS:
         names = set()
         try:
-            data = tomllib.loads((REPO / f"decks/{host}/party.toml").read_text(encoding="utf-8"))
+            manifest = REPO / "decks" / DECK_PATHS[host] / "party.toml"
+            data = tomllib.loads(manifest.read_text(encoding="utf-8"))
             if data.get("commander"):
                 names.add(data["commander"])
-            names.update(data.get("mosaic", {}).get("pinned", []))
+            names.update(MOSAIC_ORDER.get(host, []))
             names.update(data.get("extra_foils", []))
         except Exception as exc:
             print(f"  warning: could not read {host} party.toml: {exc}", file=sys.stderr)

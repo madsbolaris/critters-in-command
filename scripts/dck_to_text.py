@@ -8,7 +8,7 @@ lines, grouped as: commander, then mainboard, then (optionally) sideboard.
 
 Usage:
     python scripts/dck_to_text.py                             # all decks -> stdout
-    python scripts/dck_to_text.py decks/baylen/decklist_b4.dck  # one deck -> stdout
+    python scripts/dck_to_text.py path/to/decklist.dck          # one deck -> stdout
     python scripts/dck_to_text.py --write                     # write <deck>.txt next to each .dck
     python scripts/dck_to_text.py --moxfield                 # sideboard as "SB:" lines (Moxfield)
     python scripts/dck_to_text.py --no-sideboard            # omit the sideboard entirely
@@ -87,7 +87,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Convert Forge .dck files to plain decklist text.")
     parser.add_argument("files", nargs="*", type=Path,
-                        help="One or more .dck files (default: all decks/*/decklist_*.dck).")
+                        help="One or more .dck files (default: every decklist.dck under decks/).")
     parser.add_argument("--write", action="store_true",
                         help="Write <deck>.txt next to each .dck instead of printing.")
     parser.add_argument("--no-sideboard", dest="sideboard", action="store_false",
@@ -96,7 +96,7 @@ def main() -> int:
                         help='Emit sideboard as "SB:" lines (Moxfield bulk-import style).')
     args = parser.parse_args()
 
-    files = args.files or sorted(REPO_DIR.glob("decks/*/decklist_*.dck"))
+    files = args.files or sorted((REPO_DIR / "decks").rglob("decklist.dck"))
     if not files:
         print("No .dck files found.", file=sys.stderr)
         return 1

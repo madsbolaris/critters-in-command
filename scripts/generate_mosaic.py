@@ -3,10 +3,10 @@
 Generate mosaic images for every party (host) in the repository.
 
 Each host lives in its own folder under ``decks/`` and carries a ``party.toml``
-manifest, one or more Forge decklists (``decklist_<bracket>.dck``), and a
+manifest, one Forge decklist (``decklist.dck``), and a
 ``theme_analysis.md``. Card membership and counts come from the decklist; the
 specific printing (and the host's "highlight" flag) comes from the theme file;
-all metadata used for ordering — colors, types, reserved/old-frame status — is
+all metadata used for ordering — colors, types, and border style — is
 fetched live from the Scryfall API, so no card ordering is hard-coded here.
 
 Cards are laid out in a deterministic order:
@@ -17,7 +17,9 @@ Cards are laid out in a deterministic order:
      mana value (ascending), then by card type (creature, artifact,
      enchantment, planeswalker, instant, sorcery).
   3. Lands, sorted the same way by color identity (colorless lands last).
-  4. "Old" cards that are no longer printed (reserved list / old frame) last.
+  4. Borderless printings first, then normal printings, then old-frame
+      printings, with white-bordered printings last regardless of card type.
+      The commander remains the first card.
 
 Printings are forced to paper: if the theme file points at a digital-only
 (MTGO/Arena) printing, the script substitutes a paper printing instead.
@@ -96,22 +98,42 @@ def type_rank(type_line: str) -> int:
     return len(_TYPE_PRIORITY)
 
 
+def front_face(card):
+    faces = card.get("card_faces") or []
+    return faces[0] if faces else card
+
+
+def card_colors(card):
+    """Return colors from the card or its front face for multiface layouts."""
+    colors = card.get("colors")
+    if colors is None:
+        colors = front_face(card).get("colors", [])
+    return colors
+
+
 def is_land(card) -> bool:
-    return "Land" in card.get("type_line", "")
-
-
-def is_old_print(card) -> bool:
-    """Reserved-list or old-frame cards — the vintage staples no longer printed."""
-    if card.get("reserved"):
-        return True
-    return card.get("frame") in ("1993", "1997")
+    return "Land" in front_face(card).get("type_line", card.get("type_line", ""))
 
 
 def color_group_rank(card) -> int:
     """Color rank by the card's colors (spells) or color identity (lands)."""
     if is_land(card):
         return color_rank(card.get("color_identity", []))
-    return color_rank(card.get("colors", []))
+    return color_rank(card_colors(card))
+
+
+def style_bucket(card) -> int:
+    """Sort visually borderless treatments first, old frames late, and white borders last."""
+    border_color = card.get("border_color", "black")
+    frame_effects = set(card.get("frame_effects") or [])
+    if (border_color == "borderless" or card.get("full_art")
+            or frame_effects & {"showcase", "extendedart"}):
+        return 0
+    if border_color == "white":
+        return 3
+    if card.get("frame") in {"1993", "1997"}:
+        return 2
+    return 1
 
 
 _WUBRG = set("WUBRG")
@@ -133,8 +155,6 @@ def land_bucket(card) -> int:
       60 tri-color 64 rainbow (life) 66 devotion  68 rainbow (premium)
       80 fetchlands
 
-    Old-frame / reserved-list lands (original duals, Gaea's Cradle, ...) are
-    routed to the very end by the caller and never reach this function.
     """
     type_line = card.get("type_line", "")
     if "Basic" in type_line:
@@ -202,6 +222,8 @@ def make_sort_key(end_of_color_names, pinned_names=()):
         if entry["is_commander"]:
             return (0,)
 
+        border_bucket = style_bucket(card)
+
         name = card["name"].lower()
         # Match pins on either the resolved card name or the decklist name, so
         # double-faced cards (e.g. "Search for Azcanta") can be pinned by their
@@ -209,26 +231,19 @@ def make_sort_key(end_of_color_names, pinned_names=()):
         entry_name = entry["name"].lower()
         if name in pin_index or entry_name in pin_index:
             # Pinned cards sit right after the commander, in listed order.
-            return (0, pin_index.get(name, pin_index.get(entry_name)))
+            return (border_bucket, 0, pin_index.get(name, pin_index.get(entry_name)))
 
         if entry.get("is_attraction"):
             # The Attraction deck forms a trailing band at the very end.
-            return (5, name)
+            return (border_bucket, 4, name)
 
         highlight = 0 if entry["has_bunny"] else 1
-
-        if is_old_print(card):
-            # Old-frame / reserved-list cards (Mox Diamond, the original dual
-            # lands, Gaea's Cradle, ...) always sort to the very end, with
-            # non-lands ahead of lands, each ordered by color.
-            return (4, 1 if is_land(card) else 0, color_group_rank(card),
-                    highlight, name)
 
         if is_land(card):
             # Lands: single -> triple colors, then weakest -> strongest cycle,
             # each named cycle kept together (see land_bucket). Colour rank
             # keeps each cycle ordered white -> green -> other.
-            return (2, land_bucket(card),
+                return (border_bucket, 2, land_bucket(card),
                     color_rank(card.get("color_identity", [])), highlight, name)
 
         # Non-land spells: by color, then mana value (ascending), then type.
@@ -236,8 +251,9 @@ def make_sort_key(end_of_color_names, pinned_names=()):
         # color section instead of curving in with the rest (e.g. Baylen's
         # Hare Apparents).
         end_of_color = 1 if name in end_of_color_names else 0
-        return (1, color_rank(card.get("colors", [])), end_of_color,
-                card.get("cmc", 0), type_rank(card["type_line"]),
+        face = front_face(card)
+        return (border_bucket, 1, color_rank(card_colors(card)), end_of_color,
+            card.get("cmc", 0), type_rank(face.get("type_line", card["type_line"])),
                 highlight, name)
 
     return sort_key
@@ -297,9 +313,25 @@ def ensure_paper(card):
     return card
 
 
-def image_url_for(card) -> str:
+def image_language(card, languages: dict[str, str]) -> str | None:
+    key = f"{card['set']}/{card['collector_number']}".casefold()
+    return languages.get(key)
+
+
+def image_cache_path(card, languages: dict[str, str]) -> Path:
+    language = image_language(card, languages)
+    suffix = f"_{language}" if language else ""
+    return CACHE_DIR / f"{card['set']}_{card['collector_number']}{suffix}.jpg"
+
+
+def image_url_for(card, languages: dict[str, str] | None = None) -> str:
+    languages = languages or {}
     s = urllib.parse.quote(str(card["set"]), safe="")
     c = urllib.parse.quote(str(card["collector_number"]), safe="")
+    language = image_language(card, languages)
+    if language:
+        lang = urllib.parse.quote(language, safe="")
+        return f"{SCRYFALL_API}/cards/{s}/{c}/{lang}?format=image&version=large"
     return f"{SCRYFALL_API}/cards/{s}/{c}?format=image&version=normal"
 
 
@@ -327,13 +359,12 @@ def _norm(name: str) -> str:
 
 
 def parse_deck(dck_path: Path):
-    """Return (commander_name, commander_set, main, attractions).
+    """Return (commander_entry, main, attractions).
 
-    ``main`` and ``attractions`` are each ``[(name, count, set_code), ...]``.
+    Entries are ``(name, count, set_code, collector)`` tuples.
     The Attraction deck is a separate zone (not part of the 100), rendered last.
     """
     commander = None
-    commander_set = None
     main = []
     attractions = []
     section = None
@@ -351,13 +382,15 @@ def parse_deck(dck_path: Path):
         fields = m.group(2).split("|")
         name = fields[0].strip()
         set_code = fields[1].strip().lower() if len(fields) > 1 else None
+        collector = fields[2].strip().strip("[]") if len(fields) > 2 else None
+        entry = (name, count, set_code, collector)
         if section == "commander":
-            commander, commander_set = name, set_code
+            commander = entry
         elif section == "main":
-            main.append((name, count, set_code))
+            main.append(entry)
         elif section == "attractions":
-            attractions.append((name, count, set_code))
-    return commander, commander_set, main, attractions
+            attractions.append(entry)
+    return commander, main, attractions
 
 
 def _split_row(line: str):
@@ -417,45 +450,70 @@ def _url_to_set_collector(url: str):
     return parts[0], parts[1]
 
 
-def resolve_card(name: str, theme: dict):
+def resolve_card(name: str, set_code: str | None, collector: str | None, theme: dict):
     """Resolve a deck card to a paper Scryfall printing and its bunny flag."""
     key = _norm(name)
-    if key in theme:
-        url, has_bunny = theme[key]
+    has_bunny = theme.get(key, (None, False))[1]
+    if set_code and collector:
+        card = fetch_printing(set_code, collector)
+    elif key in theme:
+        url, _has_bunny = theme[key]
         set_code, collector = _url_to_set_collector(url)
         card = fetch_printing(set_code, collector)
     else:
         print(f"    WARNING: '{name}' not in theme analysis; using default printing")
-        has_bunny = False
         card = fetch_named(name)
     return ensure_paper(card), has_bunny
 
 
 def build_entries(host_dir: Path, bracket: str, theme: dict, sort_key):
     """Build the ordered list of card entries for one host's bracket."""
-    dck_path = host_dir / f"decklist_{bracket}.dck"
-    commander, _commander_set, main, attractions = parse_deck(dck_path)
+    dck_path = host_dir / "decklist.dck"
+    commander, main, attractions = parse_deck(dck_path)
 
     entries = []
 
     if commander:
-        card, has_bunny = resolve_card(commander, theme)
-        entries.append({"name": commander, "count": 1, "card": card,
+        name, count, set_code, collector = commander
+        card, has_bunny = resolve_card(name, set_code, collector, theme)
+        entries.append({"name": name, "count": count, "card": card,
                         "has_bunny": has_bunny, "is_commander": True})
 
-    for name, count, _set_code in main:
-        card, has_bunny = resolve_card(name, theme)
+    for name, count, set_code, collector in main:
+        card, has_bunny = resolve_card(name, set_code, collector, theme)
         entries.append({"name": name, "count": count, "card": card,
                         "has_bunny": has_bunny, "is_commander": False})
 
-    for name, count, _set_code in attractions:
-        card, has_bunny = resolve_card(name, theme)
+    for name, count, set_code, collector in attractions:
+        card, has_bunny = resolve_card(name, set_code, collector, theme)
         entries.append({"name": name, "count": count, "card": card,
                         "has_bunny": has_bunny, "is_commander": False,
                         "is_attraction": True})
 
     entries.sort(key=sort_key)
     return entries
+
+
+def validate_pinned(entries: list, pinned_names: list[str], slug: str) -> None:
+    """Require an explicit order for every non-commander first-bucket card."""
+    configured = [name.casefold() for name in pinned_names]
+    if len(configured) != len(set(configured)):
+        raise ValueError(f"{slug}: duplicate name in mosaic_order")
+
+    actual = {
+        entry["name"].casefold(): entry["name"]
+        for entry in entries
+        if not entry["is_commander"] and style_bucket(entry["card"]) == 0
+    }
+    missing = [actual[name] for name in actual.keys() - set(configured)]
+    unknown = [name for name in pinned_names if name.casefold() not in actual]
+    if missing or unknown:
+        details = []
+        if missing:
+            details.append(f"unconfigured first-bucket cards: {sorted(missing)}")
+        if unknown:
+            details.append(f"configured cards not in first bucket: {unknown}")
+        raise ValueError(f"{slug}: {'; '.join(details)}")
 
 
 # ---------------------------------------------------------------------------
@@ -501,7 +559,7 @@ def sync_dck_printings(host_dir: Path, bracket: str, entries: list, theme: dict)
     single source of truth for printings). Cards absent from the theme file
     (e.g. basic lands) keep their existing ``.dck`` printing.
     """
-    dck_path = host_dir / f"decklist_{bracket}.dck"
+    dck_path = host_dir / "decklist.dck"
     resolved = {}
     for e in entries:
         if _norm(e["name"]) in theme:
@@ -544,9 +602,10 @@ def generate_variant(host: dict, bracket: str, sync_dck: bool = False):
     highlight_columns = mosaic_cfg.get("highlight_columns", [])
     end_of_color = mosaic_cfg.get("end_of_color", [])
     pinned = mosaic_cfg.get("pinned", [])
+    image_languages = host["config"].get("image_language", {})
 
-    output_file = host_dir / f"deck_mosaic_{bracket}.png"
-    preview_file = host_dir / f"deck_mosaic_{bracket}_preview.jpg"
+    output_file = host_dir / "deck_mosaic.png"
+    preview_file = host_dir / "deck_mosaic_preview.jpg"
 
     label = f"{host['slug']}/{bracket}"
     print(f"\n{'='*60}")
@@ -565,6 +624,7 @@ def generate_variant(host: dict, bracket: str, sync_dck: bool = False):
 
     print("Resolving cards from decklist + theme analysis (via Scryfall)...")
     entries = build_entries(host_dir, bracket, theme, sort_key)
+    validate_pinned(entries, pinned, host["slug"])
     total = sum(e["count"] for e in entries)
     bunny_count = sum(e["count"] for e in entries if e["has_bunny"])
     print(f"Found {total} cards ({bunny_count} highlighted)")
@@ -574,13 +634,13 @@ def generate_variant(host: dict, bracket: str, sync_dck: bool = False):
     image_paths: list[Path] = []
     for i, e in enumerate(entries):
         card = e["card"]
-        cache_path = CACHE_DIR / f"{card['set']}_{card['collector_number']}.jpg"
+        cache_path = image_cache_path(card, image_languages)
         status = "cached" if cache_path.exists() else "downloading"
         bunny_marker = " 🐰" if e["has_bunny"] else ""
         copies = f" ×{e['count']}" if e["count"] > 1 else ""
         print(f"  [{i+1}/{len(entries)}] {e['name']}{copies} ({status}){bunny_marker}")
         try:
-            download_image(image_url_for(card), cache_path)
+            download_image(image_url_for(card, image_languages), cache_path)
         except Exception as exc:
             print(f"    ERROR: {exc}")
             continue
@@ -598,13 +658,23 @@ def generate_variant(host: dict, bracket: str, sync_dck: bool = False):
 
 
 def load_hosts() -> dict:
-    """Discover host folders under ``decks/`` that carry a ``party.toml``."""
+    """Load every deck directory configured in ``deckcheck.toml``."""
     hosts = {}
-    for manifest in sorted(DECKS_DIR.glob("*/party.toml")):
-        with manifest.open("rb") as fh:
-            config = tomllib.load(fh)
-        slug = manifest.parent.name
-        hosts[slug] = {"slug": slug, "dir": manifest.parent, "config": config}
+    with (REPO_DIR / "deckcheck.toml").open("rb") as config_file:
+        deckcheck = tomllib.load(config_file)
+    mosaic_order = deckcheck.get("mosaic_order", {})
+    image_languages = deckcheck.get("image_language", {})
+    for slug, relative_path in sorted(deckcheck.get("paths", {}).items()):
+        host_dir = DECKS_DIR / relative_path
+        manifest = host_dir / "party.toml"
+        if manifest.exists():
+            with manifest.open("rb") as manifest_file:
+                config = tomllib.load(manifest_file)
+        else:
+            config = {"brackets": ["b3"]}
+        config.setdefault("mosaic", {})["pinned"] = list(mosaic_order.get(slug, []))
+        config["image_language"] = image_languages
+        hosts[slug] = {"slug": slug, "dir": host_dir, "config": config}
     return hosts
 
 
@@ -613,8 +683,7 @@ def host_brackets(host: dict) -> list:
     brackets = host["config"].get("brackets")
     if brackets:
         return list(brackets)
-    return sorted(p.stem.replace("decklist_", "")
-                  for p in host["dir"].glob("decklist_*.dck"))
+    return ["b3"] if (host["dir"] / "decklist.dck").exists() else []
 
 
 def host_theme_file(host: dict):
@@ -628,7 +697,7 @@ def host_theme_file(host: dict):
 def main():
     hosts = load_hosts()
     if not hosts:
-        print(f"No host folders with party.toml found under {DECKS_DIR}.")
+        print(f"No deck paths configured in {REPO_DIR / 'deckcheck.toml'}.")
         sys.exit(1)
 
     args = sys.argv[1:]

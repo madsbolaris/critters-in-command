@@ -1,0 +1,39 @@
+# DeckCheck's public API fetches decks by URL but does not expose account or
+# folder discovery. Each stable slug maps to its grouped repository directory
+# and its public deck URL.
+
+[paths]
+baylen = "Somebunny Is Having a Party/Baylen – Somebunny Brought the Whole Warren"
+bumbleflower = "Somebunny Is Having a Party/Ms. Bumbleflower – Somebunny Said I Do"
+camellia = "Nuts About Capatalism/Camellia – Nuts About Consumption"
+chatterfang = "Nuts About Capatalism/Chatterfang – Nuts About AI"
+clement = "Cold-Blooded Monsters/Clement – Cold-Blooded Calculations"
+dumpster-dig = "Dumpster Diving/Bello – Dumpster Dig"
+finneas = "Somebunny Is Having a Party/Finneas – Somebunny’s On the Menu"
+hazel = "Nuts About Capatalism/Hazel – Nuts About Replication"
+muerra = "Dumpster Diving/Muerra – Dumpster Fire"
+zoraline = "Sky High Costs/Zoraline – Sky High Premiums"
+
+[mosaic_order]
+baylen = ["The Great Henge", "Halo Fountain", "Craterhoof Behemoth"]
+bumbleflower = ["Wedding Ring", "Savor the Moment", "Smothering Tithe"]
+camellia = ["Bag End Banquet", "Bilbo, Fellow Conspirator", "Ygra, Eater of All"]
+chatterfang = ["Inventors' Fair", "Warren Soultrader", "Ultron, Artificial Malevolence"]
+clement = ["Wan Shi Tong, Librarian", "Zimone, Infinite Analyst", "Tanazir Quandrix"]
+dumpster-dig = ["Foundry Inspector", "Subterranean Tremors", "Trumpeting Carnosaur"]
+finneas = ["Gilded Goose", "Archangel of Thune", "Mycoloth"]
+hazel = ["Bioengineered Future", "Mimic Vat", "March of the World Ooze"]
+muerra = ["Junktown", "Rose, Cutthroat Raider", "Fiery Emancipation"]
+zoraline = ["Leyline of Hope", "Diabolic Intent", "Exsanguinate"]
+
+[folders.b3]
+baylen = "https://deckcheck.co/app/decklist/BGWUsu6UP324"
+bumbleflower = "https://deckcheck.co/app/decklist/vjAx31t69qBD"
+camellia = "https://deckcheck.co/app/decklist/h3NPa0XXYSOD"
+chatterfang = "https://deckcheck.co/app/decklist/5QgPv0WQRlHB"
+clement = "https://deckcheck.co/app/decklist/u7iOLJokuevU"
+dumpster-dig = "https://deckcheck.co/app/decklist/bmPG1cjgMSMb"
+finneas = "https://deckcheck.co/app/decklist/0pEAn8qoBe4L"
+hazel = "https://deckcheck.co/app/decklist/Fn4gM0eab0Gf"
+muerra = "https://deckcheck.co/app/decklist/i2SCpdyynAPz"
+zoraline = "https://deckcheck.co/app/decklist/jW3PHgxbvn3x"

@@ -9,7 +9,7 @@ decks**.
 - **Opponents:** the current top‑20 commanders on EDHREC by deck count, each
   using its **optimized** average decklist (EDHREC's high‑power / bracket‑4 tier),
   pulled as actual lists from EDHREC's `_next/data` API on **2026‑07‑24**.
-- **My decks:** the actual `decklist_b4` lists in this repo.
+- **My decks:** the actual `decklist.dck` lists in this repo.
 - **Baylen update (2026‑07‑25):** the Baylen list was revised (−Faith's Reward,
   −Rabbit Battery, −Beastmaster Ascension, −Caretaker's Talent, −Smothering Tithe;
   +Secure the Wastes, +Call the Coppercoats, +Springleaf Parade, +Awaken the Woods,
