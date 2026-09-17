@@ -10,13 +10,13 @@ Before long, the itinerary has tripled, and Ms. Bumbleflower needs an entire tea
 
 Undeterred, Ms. Bumbleflower simply restocks. [Reliquary Tower](https://scryfall.com/card/soc/398) warehouses the presents—including a [Teferi’s Puzzle Box](https://scryfall.com/card/10e/340/teferis-puzzle-box) nobody has worked up the nerve to open—and one well-timed [Replenish](https://scryfall.com/search?q=%21%22Replenish%22) spell rebuilds the entire celebration before anyone can escape through the rubble. One sip from the [Elixir of Immortality](https://scryfall.com/card/c21/243) leaves her refreshed, radiant, and ready to renew the vows.
 
-She may be thriving, but the guests are not so lucky. The days themselves fall under [Teferi’s Tutelage](https://scryfall.com/card/m21/78), while the bells, speeches, and travel announcements become a [Maddening Cacophony](https://scryfall.com/card/znr/67). As [Psychic Corrosion](https://scryfall.com/card/m19/68) sets in, a [Psychic Spiral](https://scryfall.com/card/rtr/47) carries away where they’ve been, what they agreed to, and how many pages remain in their checkbooks. By the time the next bill arrives, all they can muster is a rueful [Swan Song](https://scryfall.com/card/c16/98).
+She may be thriving, but the guests are not so lucky. The days themselves fall under [Teferi’s Tutelage](https://scryfall.com/card/m21/78), while the bells, speeches, and travel announcements become a [Maddening Cacophony](https://scryfall.com/card/znr/67). As [Psychic Corrosion](https://scryfall.com/card/m19/68) sets in, a [Psychic Spiral](https://scryfall.com/card/rtr/47) carries away where they’ve been, what they agreed to, and how many pages remain in their checkbooks.
 
 When the guests become too difficult, Ms. Bumbleflower simply moves the ceremony again—this time to a chapel carved into the [Glacial Chasm](https://scryfall.com/card/ice/353), the most remote venue yet, where a watchful [Perch Protection](https://scryfall.com/card/plst/blc-11) keeps would-be objectors at the edge of the tent and a shimmering [Sphere of Safety](https://scryfall.com/card/sld/280) around the altar makes sure no complaint gets through. Any guest bold enough to organize a coordinated revolt is simply met with [An Offer You Can’t Refuse](https://scryfall.com/card/fdn/160).
 
 Their [Fraying Sanity](https://scryfall.com/card/hou/35) shows in the stained-glass window above the altar, where [Jace, Wielder of Mysteries](https://scryfall.com/card/sld/506/jace-wielder-of-mysteries) watches the [Approach of the Second Sun](https://scryfall.com/card/akh/4/approach-of-the-second-sun) with the expression of someone who knows they will all be doing this again tomorrow. It’s enough to [Traumatize](https://scryfall.com/card/m14/77) even the hardiest guest—not that anyone is warm enough left to lift a paw in protest.
 
-There simply isn’t anything left.
+There simply isn’t anything left. All they can muster is a rueful [Swan Song](https://scryfall.com/card/c16/98).
 
 Everybunny came to celebrate. Everybunny left bankrupt.
 
