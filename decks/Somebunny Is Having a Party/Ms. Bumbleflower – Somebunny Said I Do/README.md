@@ -1,11 +1,13 @@
 # Somebunny Has to Pay for This
 
-* **Commander:** [Ms. Bumbleflower](https://scryfall.com/card/blc/103)
-* **Colors:** Bant (White / Blue / Green)
-* **Archetype:** Group-hug mill and draw punishment
-* **Bracket:** 4 — Optimized (Game-Changer-dense, but a slow clock; not cEDH)
-* **Good against:** Slow midrange and control decks, draw-heavy strategies, and decks that aggressively tutor through their libraries
-* **Struggles against:** Graveyard decks that benefit from being milled, shuffle effects that restore the library, draw-denial effects, and fast combo decks that exploit the extra cards
+| | |
+|---|---|
+| **Commander** | [Ms. Bumbleflower](https://scryfall.com/card/blc/103) |
+| **Colors** | Bant (White / Blue / Green) |
+| **Archetype** | Group-hug mill and draw punishment |
+| **Bracket** | 4 — Optimized (Game-Changer-dense, but a slow clock; not cEDH) |
+| **Good against** | Slow midrange and control decks, draw-heavy strategies, and decks that aggressively tutor through their libraries |
+| **Struggles against** | Graveyard decks that benefit from being milled, shuffle effects that restore the library, draw-denial effects, and fast combo decks that exploit the extra cards |
 
 [Ms. Bumbleflower](https://scryfall.com/card/blc/103) has found the one. She has only one demand: everybunny *must* be there to **[Savor the Moment](https://scryfall.com/card/sld/1006)** when she says “I do.” Not at just one ceremony, of course—that would never do. She wants memories to last a lifetime, so she books the whole world.
 
