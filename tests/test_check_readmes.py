@@ -113,6 +113,45 @@ class BuildGlobalCardCountsTests(unittest.TestCase):
         self.assertEqual(counts[check_readmes.normalize_name("Caretaker's Talent")], 2)
 
 
+class ClassifyCardTypeTests(unittest.TestCase):
+    def test_land_takes_priority_over_creature(self):
+        self.assertEqual(check_readmes.classify_card_type("Land Creature — Tree"), "Land")
+
+    def test_creature_takes_priority_over_artifact(self):
+        self.assertEqual(check_readmes.classify_card_type("Artifact Creature — Golem"), "Creature")
+
+    def test_plain_types(self):
+        self.assertEqual(check_readmes.classify_card_type("Sorcery"), "Sorcery")
+        self.assertEqual(check_readmes.classify_card_type("Instant"), "Instant")
+        self.assertEqual(check_readmes.classify_card_type("Enchantment"), "Enchantment")
+        self.assertEqual(check_readmes.classify_card_type("Artifact"), "Artifact")
+
+    def test_unrecognized_type_is_other(self):
+        self.assertEqual(check_readmes.classify_card_type("Planeswalker — Jace"), "Other")
+
+
+class GroupUncoveredByTypeTests(unittest.TestCase):
+    def test_returns_none_without_a_type_index(self):
+        self.assertIsNone(check_readmes.group_uncovered_by_type([("Sol Ring", 0)], None))
+
+    def test_groups_in_display_order_and_flags_unknowns(self):
+        uncovered = [
+            ("Sol Ring", 9), ("Command Tower", 8), ("Sylvan Library", 3),
+            ("Fascination", 0), ("Mystery Card", 0),
+        ]
+        type_index = {
+            check_readmes.normalize_name("Sol Ring"): "Artifact",
+            check_readmes.normalize_name("Command Tower"): "Land",
+            check_readmes.normalize_name("Sylvan Library"): "Enchantment",
+            check_readmes.normalize_name("Fascination"): "Sorcery",
+            # "Mystery Card" deliberately left out of the index.
+        }
+        grouped = check_readmes.group_uncovered_by_type(uncovered, type_index)
+        group_names = [group for group, _cards in grouped]
+        self.assertEqual(group_names, ["Sorcery", "Artifact", "Enchantment", "Land", "Unknown"])
+        self.assertEqual(dict(grouped)["Unknown"], [("Mystery Card", 0)])
+
+
 class CheckScryfallLinkTests(unittest.TestCase):
     def setUp(self):
         self._tmpdir = tempfile.TemporaryDirectory()

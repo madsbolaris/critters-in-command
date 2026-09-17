@@ -37,7 +37,13 @@ so the cards most unique to this particular deck bubble to the top.
 
 Every run also writes a per-deck ``readme_check_report.md`` (gitignored) next
 to each README with the same information, so it can be referenced while
-editing without re-running the script.
+editing without re-running the script. In that report, the uncovered-card list
+is also grouped by card type (Creature, Sorcery, Instant, Artifact,
+Enchantment, Land) using the local Scryfall bulk-data cache already maintained
+by ``scripts/shopping_list.py`` (``scripts/.cache/scryfall_default_cards.json``).
+If that cache hasn't been populated yet, the list falls back to ungrouped —
+run ``scripts/shopping_list.py`` once to populate it (still no network call
+from this script itself).
 
 Usage:
     python scripts/check_readmes.py                  # every deck
@@ -48,6 +54,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 import unicodedata
@@ -57,6 +64,9 @@ from pathlib import Path
 
 REPO_DIR = Path(__file__).parent.parent
 DECKS_DIR = REPO_DIR / "decks"
+CACHE_DIR = REPO_DIR / "scripts" / ".cache"
+BULK_FILE = CACHE_DIR / "scryfall_default_cards.json"
+TYPE_INDEX_FILE = CACHE_DIR / "card_type_index.json"
 
 ALLOWED_EXTERNAL_DOMAINS = {"scryfall.com", "deckcheck.co"}
 
@@ -258,11 +268,74 @@ def discover_decks() -> list[Path]:
     )
 
 
+# Display order for the report's grouped uncovered-card section.
+TYPE_GROUPS = ["Creature", "Sorcery", "Instant", "Artifact", "Enchantment", "Land"]
+# Priority order for classifying a type_line that spans multiple of the above
+# (e.g. "Artifact Creature", "Land Creature") — first match wins.
+_TYPE_CLASSIFY_ORDER = ("Land", "Creature", "Artifact", "Enchantment", "Instant", "Sorcery")
+
+
+def _build_type_index() -> dict[str, str]:
+    with BULK_FILE.open(encoding="utf-8") as f:
+        bulk_cards = json.load(f)
+    index: dict[str, str] = {}
+    for card in bulk_cards:
+        name = card.get("name")
+        type_line = card.get("type_line")
+        if not name or not type_line:
+            continue
+        # Also index the front-face name, for split/DFC/adventure cards.
+        for key in {normalize_name(name), normalize_name(name.split(" // ")[0])}:
+            index.setdefault(key, type_line)
+    return index
+
+
+def load_type_index() -> dict[str, str] | None:
+    """Normalized card name -> Scryfall ``type_line``, read from the local bulk-data
+    cache that ``scripts/shopping_list.py`` maintains. Never calls the network;
+    returns ``None`` if that cache hasn't been populated yet.
+
+    The full ~600 MB bulk file is distilled into a small name->type_line
+    side-car (``card_type_index.json``) so repeat runs stay fast.
+    """
+    if not BULK_FILE.exists():
+        return None
+    if TYPE_INDEX_FILE.exists() and TYPE_INDEX_FILE.stat().st_mtime >= BULK_FILE.stat().st_mtime:
+        with TYPE_INDEX_FILE.open(encoding="utf-8") as f:
+            return json.load(f)
+    index = _build_type_index()
+    TYPE_INDEX_FILE.write_text(json.dumps(index), encoding="utf-8")
+    return index
+
+
+def classify_card_type(type_line: str) -> str:
+    for group in _TYPE_CLASSIFY_ORDER:
+        if group in type_line:
+            return group
+    return "Other"
+
+
+def group_uncovered_by_type(
+    uncovered: list[tuple[str, int]], type_index: dict[str, str] | None
+) -> list[tuple[str, list[tuple[str, int]]]] | None:
+    """Bucket an already-sorted uncovered list by card type. ``None`` if types
+    aren't available (no local bulk-data cache yet)."""
+    if type_index is None:
+        return None
+    buckets: dict[str, list[tuple[str, int]]] = {}
+    for name, count in uncovered:
+        type_line = type_index.get(normalize_name(name), "")
+        group = classify_card_type(type_line) if type_line else "Unknown"
+        buckets.setdefault(group, []).append((name, count))
+    order = TYPE_GROUPS + ["Other", "Unknown"]
+    return [(group, buckets[group]) for group in order if group in buckets]
+
+
 REPORT_FILENAME = "readme_check_report.md"
 
 
 def render_report(rel: Path, errors: list[Issue], warnings: list[Issue],
-                   uncovered: list[tuple[str, int]]) -> str:
+                   uncovered: list[tuple[str, int]], type_index: dict[str, str] | None) -> str:
     lines = [
         f"# README check report — {rel.name}",
         "",
@@ -284,13 +357,27 @@ def render_report(rel: Path, errors: list[Issue], warnings: list[Issue],
     lines.append("")
 
     lines.append("## Cards not mentioned in the README (most deck-unique first)")
-    if uncovered:
+    if not uncovered:
+        lines.append("None.")
+        lines.append("")
+        return "\n".join(lines)
+
+    grouped = group_uncovered_by_type(uncovered, type_index)
+    if grouped is None:
+        lines.append("_Card-type grouping unavailable — run `scripts/shopping_list.py` once to populate the "
+                      "local Scryfall cache, then re-run this checker._")
+        lines.append("")
         for name, count in uncovered:
             label = "deck" if count == 1 else "decks"
             lines.append(f"- {name} ({count} other {label})")
+        lines.append("")
     else:
-        lines.append("None.")
-    lines.append("")
+        for group, cards_in_group in grouped:
+            lines.append(f"### {group}")
+            for name, count in cards_in_group:
+                label = "deck" if count == 1 else "decks"
+                lines.append(f"- {name} ({count} other {label})")
+            lines.append("")
 
     return "\n".join(lines)
 
@@ -308,6 +395,12 @@ def main() -> int:
 
     # Card-uniqueness counts always span the whole repo, independent of any --decks filter below.
     global_card_counts = build_global_card_counts(deck_dirs)
+
+    type_index = load_type_index()
+    if type_index is None:
+        print("Note: scripts/.cache/scryfall_default_cards.json not found; the uncovered-card report "
+              "section won't be grouped by type. Run scripts/shopping_list.py once to populate it.",
+              file=sys.stderr)
 
     if args.decks:
         wanted = [needle.lower() for needle in args.decks]
@@ -341,7 +434,9 @@ def main() -> int:
             print(f"  INFO: {len(uncovered)} deck card(s) not mentioned in the README "
                   f"(most deck-unique first): {', '.join(formatted)}")
 
-        (deck_dir / REPORT_FILENAME).write_text(render_report(rel, errors, warnings, uncovered), encoding="utf-8")
+        (deck_dir / REPORT_FILENAME).write_text(
+            render_report(rel, errors, warnings, uncovered, type_index), encoding="utf-8"
+        )
 
         had_errors = had_errors or bool(errors)
 
