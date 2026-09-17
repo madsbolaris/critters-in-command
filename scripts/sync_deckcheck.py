@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Sync known public DeckCheck decks into bracket folders in this repository.
+"""Sync known public DeckCheck decks into this repository.
 
 DeckCheck's open API can fetch a public deck by URL without an API key, but it
 does not provide public account or folder discovery. Deck URLs therefore live
-in ``deckcheck.toml`` under ``[folders.b3]``, with local deck directories
+in ``deckcheck.toml`` under ``[folders]``, with local deck directories
 configured under ``[paths]``.
 """
 
@@ -29,7 +29,6 @@ REPO = Path(__file__).resolve().parent.parent
 DEFAULT_CONFIG = REPO / "deckcheck.toml"
 API_URL = "https://deckcheck.co/api/external/deck"
 IMAGE_DIR = REPO / "card_images"
-BRACKETS = ("b3",)
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
@@ -39,7 +38,6 @@ class SyncError(Exception):
 
 @dataclass(frozen=True)
 class DeckSource:
-    bracket: str
     slug: str
     url: str
     directory: Path
@@ -56,28 +54,24 @@ def load_sources(path: Path) -> list[DeckSource]:
 
     folders = config.get("folders")
     if not isinstance(folders, dict):
-        raise SyncError(f"{path} must contain [folders.b3]")
+        raise SyncError(f"{path} must contain [folders]")
     paths = config.get("paths")
     if not isinstance(paths, dict):
         raise SyncError(f"{path} must contain a [paths] table")
 
     sources: list[DeckSource] = []
-    for bracket in BRACKETS:
-        entries = folders.get(bracket, {})
-        if not isinstance(entries, dict):
-            raise SyncError(f"[folders.{bracket}] must be a table")
-        for slug, url in sorted(entries.items()):
-            if not SLUG_RE.fullmatch(slug):
-                raise SyncError(f"Invalid deck slug {slug!r}; use lowercase kebab-case")
-            if not isinstance(url, str) or not url.startswith("https://deckcheck.co/"):
-                raise SyncError(f"{bracket}.{slug} must be a DeckCheck HTTPS URL")
-            directory_value = paths.get(slug)
-            if not isinstance(directory_value, str) or not directory_value:
-                raise SyncError(f"No local path configured for {slug!r} in [paths]")
-            directory = Path(directory_value)
-            if directory.is_absolute() or ".." in directory.parts:
-                raise SyncError(f"Invalid local path for {slug!r}: {directory_value!r}")
-            sources.append(DeckSource(bracket, slug, url, directory))
+    for slug, url in sorted(folders.items()):
+        if not SLUG_RE.fullmatch(slug):
+            raise SyncError(f"Invalid deck slug {slug!r}; use lowercase kebab-case")
+        if not isinstance(url, str) or not url.startswith("https://deckcheck.co/"):
+            raise SyncError(f"{slug} must be a DeckCheck HTTPS URL")
+        directory_value = paths.get(slug)
+        if not isinstance(directory_value, str) or not directory_value:
+            raise SyncError(f"No local path configured for {slug!r} in [paths]")
+        directory = Path(directory_value)
+        if directory.is_absolute() or ".." in directory.parts:
+            raise SyncError(f"Invalid local path for {slug!r}: {directory_value!r}")
+        sources.append(DeckSource(slug, url, directory))
 
     if not sources:
         raise SyncError(f"No deck URLs configured in {path}")
@@ -98,16 +92,16 @@ def fetch_deck(source: DeckSource) -> dict[str, Any]:
             detail = json.load(error).get("error", error.reason)
         except (json.JSONDecodeError, AttributeError):
             detail = error.reason
-        raise SyncError(f"{source.bracket}/{source.slug}: DeckCheck returned {error.code}: {detail}") from error
+        raise SyncError(f"{source.slug}: DeckCheck returned {error.code}: {detail}") from error
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as error:
-        raise SyncError(f"{source.bracket}/{source.slug}: could not fetch DeckCheck deck: {error}") from error
+        raise SyncError(f"{source.slug}: could not fetch DeckCheck deck: {error}") from error
 
     if not isinstance(payload, dict):
-        raise SyncError(f"{source.bracket}/{source.slug}: DeckCheck returned an invalid payload")
+        raise SyncError(f"{source.slug}: DeckCheck returned an invalid payload")
     if payload.get("visibility") != "public":
-        raise SyncError(f"{source.bracket}/{source.slug}: deck is not public")
+        raise SyncError(f"{source.slug}: deck is not public")
     if payload.get("format") != "commander":
-        raise SyncError(f"{source.bracket}/{source.slug}: expected Commander, got {payload.get('format')!r}")
+        raise SyncError(f"{source.slug}: expected Commander, got {payload.get('format')!r}")
     return payload
 
 
@@ -174,7 +168,7 @@ def load_image_languages(path: Path) -> dict[str, str]:
 
 
 def image_sources(
-    decks: dict[tuple[str, str], dict[str, Any]],
+    decks: dict[str, dict[str, Any]],
     languages: dict[str, str] | None = None,
 ) -> dict[Path, str]:
     languages = languages or {}
@@ -291,7 +285,7 @@ def main(argv: list[str] | None = None) -> int:
             sources = [source for source in sources if source.slug == args.deck]
             if not sources:
                 raise SyncError(f"Unknown deck slug: {args.deck}")
-        decks = {(source.bracket, source.slug): fetch_deck(source) for source in sources}
+        decks = {source.slug: fetch_deck(source) for source in sources}
         rendered = {key: render_dck(deck) for key, deck in decks.items()}
         languages = load_image_languages(args.config)
         images = image_sources(decks, languages) if args.images else {}
@@ -299,9 +293,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ERROR: {error}", file=sys.stderr)
         return 2
 
-    source_by_key = {(source.bracket, source.slug): source for source in sources}
-    for (bracket, slug), content in sorted(rendered.items()):
-        source = source_by_key[(bracket, slug)]
+    source_by_key = {source.slug: source for source in sources}
+    for slug, content in sorted(rendered.items()):
+        source = source_by_key[slug]
         output = REPO / "decks" / source.directory / "decklist.dck"
         if args.dry_run:
             print(f"Would write {output.relative_to(REPO)}")
@@ -333,19 +327,6 @@ def main(argv: list[str] | None = None) -> int:
         except SyncError as error:
             print(f"ERROR: {error}", file=sys.stderr)
             return 2
-
-    bracket_warnings = []
-    for (bracket, slug), deck in sorted(decks.items()):
-        expected_bracket = int(bracket.removeprefix("b"))
-        if deck.get("bracket") != expected_bracket:
-            bracket_warnings.append(
-                f"{slug}: configured as {bracket}, DeckCheck currently computes "
-                f"bracket {deck.get('bracket')!r}"
-            )
-    if bracket_warnings:
-        print("\nBracket warnings:", file=sys.stderr)
-        for warning in bracket_warnings:
-            print(f"- {warning}", file=sys.stderr)
 
     print("Sync complete.")
     return 0

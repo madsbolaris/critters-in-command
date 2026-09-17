@@ -4,7 +4,6 @@ host = "Baylen, the Haymaker"
 commander = "Baylen, the Haymaker"
 tagline = "Everybunny's invited. Not everybunny leaves."
 strategy = "Explosive Naya (R/G/W) go-wide rabbit tribal that snowballs fast, often winning by turn 4-5 via Halo Fountain's alternate win (untap a wide board tapped by Baylen); an overrun (Craterhoof, Finale of Devastation) is the backup. Flood the field with cheap rabbit tokens and multiply with doublers (Parallel Lives, Mondrak, Ojer Taq). With Enduring Vitality and Seedborn Muse untapping every turn, Baylen digs the whole deck and funds it all with mana."
-brackets = ["b3"]
 
 # Extra cards bought as foil beyond the commander and featured trio.
 extra_foils = ["Finale of Devastation", "Grand Crescendo"]

@@ -44,16 +44,16 @@ class SyncDeckcheckTests(unittest.TestCase):
             config = Path(directory) / "deckcheck.toml"
             config.write_text(
                 '[paths]\nbaylen = "Parties/Baylen - Warren"\ndumpster-dig = "Diving/Bello - Dig"\n'
-                '[folders.b3]\nbaylen = "https://deckcheck.co/app/decklist/b3-id"\n'
+                '[folders]\nbaylen = "https://deckcheck.co/app/decklist/baylen-id"\n'
                 'dumpster-dig = "https://deckcheck.co/app/decklist/dig-id"\n',
                 encoding="utf-8",
             )
             sources = sync_deckcheck.load_sources(config)
         self.assertEqual(
-            [(source.bracket, source.slug, str(source.directory)) for source in sources],
+            [(source.slug, str(source.directory)) for source in sources],
             [
-                ("b3", "baylen", "Parties/Baylen - Warren"),
-                ("b3", "dumpster-dig", "Diving/Bello - Dig"),
+                ("baylen", "Parties/Baylen - Warren"),
+                ("dumpster-dig", "Diving/Bello - Dig"),
             ],
         )
 
@@ -62,7 +62,7 @@ class SyncDeckcheckTests(unittest.TestCase):
             config = Path(directory) / "deckcheck.toml"
             config.write_text(
                 '[paths]\nbaylen = "../outside"\n'
-                '[folders.b3]\nbaylen = "https://deckcheck.co/app/decklist/b3-id"\n',
+                '[folders]\nbaylen = "https://deckcheck.co/app/decklist/baylen-id"\n',
                 encoding="utf-8",
             )
             with self.assertRaises(sync_deckcheck.SyncError):
@@ -83,7 +83,7 @@ class SyncDeckcheckTests(unittest.TestCase):
         self.assertNotIn("Front Room // Back Room", output)
 
     def test_image_sources_deduplicate_shared_printings(self):
-        decks = {("b3", "one"): deck(), ("b3", "two"): deck("Other Deck")}
+        decks = {"one": deck(), "two": deck("Other Deck")}
         sources = sync_deckcheck.image_sources(decks)
         self.assertEqual(len(sources), 2)
         self.assertIn(sync_deckcheck.IMAGE_DIR / "fdn_281.jpg", sources)
@@ -96,7 +96,7 @@ class SyncDeckcheckTests(unittest.TestCase):
             "front": "https://cards.scryfall.io/large/front/forest.jpg",
             "back": "https://cards.scryfall.io/large/back/forest.jpg",
         }
-        sources = sync_deckcheck.image_sources({("b3", "test"): payload})
+        sources = sync_deckcheck.image_sources({"test": payload})
         self.assertEqual(
             sources[sync_deckcheck.IMAGE_DIR / "fdn_281.jpg"],
             "https://cards.scryfall.io/large/front/forest.jpg",
@@ -104,7 +104,7 @@ class SyncDeckcheckTests(unittest.TestCase):
 
     def test_image_sources_use_language_specific_cache_and_url(self):
         sources = sync_deckcheck.image_sources(
-            {("b3", "test"): deck()}, {"fdn/281": "ja"}
+            {"test": deck()}, {"fdn/281": "ja"}
         )
         path = sync_deckcheck.IMAGE_DIR / "fdn_281_ja.jpg"
         self.assertIn(path, sources)

@@ -31,10 +31,9 @@ text/Moxfield exports stay in lockstep with the mosaic. Cards absent from the
 theme file (e.g. basic lands) keep whatever printing the ``.dck`` already has.
 
 Usage:
-    python scripts/generate_mosaic.py                 # every host, every bracket
-    python scripts/generate_mosaic.py baylen          # one host, all brackets
-    python scripts/generate_mosaic.py baylen b4       # one host, one bracket
-    python scripts/generate_mosaic.py baylen b4 --sync-dck  # + rewrite .dck printings
+    python scripts/generate_mosaic.py                 # every host
+    python scripts/generate_mosaic.py baylen          # one host
+    python scripts/generate_mosaic.py baylen --sync-dck  # + rewrite .dck printings
 """
 
 import sys
@@ -466,8 +465,8 @@ def resolve_card(name: str, set_code: str | None, collector: str | None, theme: 
     return ensure_paper(card), has_bunny
 
 
-def build_entries(host_dir: Path, bracket: str, theme: dict, sort_key):
-    """Build the ordered list of card entries for one host's bracket."""
+def build_entries(host_dir: Path, theme: dict, sort_key):
+    """Build the ordered list of card entries for one host."""
     dck_path = host_dir / "decklist.dck"
     commander, main, attractions = parse_deck(dck_path)
 
@@ -553,7 +552,7 @@ def create_preview(mosaic_path: Path, preview_path: Path):
         preview.save(preview_path, "JPEG", quality=88, optimize=True)
 
 
-def sync_dck_printings(host_dir: Path, bracket: str, entries: list, theme: dict) -> None:
+def sync_dck_printings(host_dir: Path, entries: list, theme: dict) -> None:
     """Rewrite the ``.dck``'s ``|SET|[collector]`` to match the mosaic's resolved
     printings, keeping the decklist in lockstep with ``theme_analysis.md`` (the
     single source of truth for printings). Cards absent from the theme file
@@ -595,8 +594,8 @@ def sync_dck_printings(host_dir: Path, bracket: str, entries: list, theme: dict)
     print(f"  Synced {dck_path.name}: {changes} printing(s) updated from theme_analysis.md")
 
 
-def generate_variant(host: dict, bracket: str, sync_dck: bool = False):
-    """Generate a mosaic for a single host's bracket."""
+def generate_variant(host: dict, sync_dck: bool = False):
+    """Generate a mosaic for a single host."""
     host_dir = host["dir"]
     mosaic_cfg = host["config"].get("mosaic", {})
     highlight_columns = mosaic_cfg.get("highlight_columns", [])
@@ -607,7 +606,7 @@ def generate_variant(host: dict, bracket: str, sync_dck: bool = False):
     output_file = host_dir / "deck_mosaic.png"
     preview_file = host_dir / "deck_mosaic_preview.jpg"
 
-    label = f"{host['slug']}/{bracket}"
+    label = host["slug"]
     print(f"\n{'='*60}")
     print(f"Generating {label} mosaic...")
     print(f"{'='*60}")
@@ -623,7 +622,7 @@ def generate_variant(host: dict, bracket: str, sync_dck: bool = False):
     sort_key = make_sort_key(end_of_color, pinned)
 
     print("Resolving cards from decklist + theme analysis (via Scryfall)...")
-    entries = build_entries(host_dir, bracket, theme, sort_key)
+    entries = build_entries(host_dir, theme, sort_key)
     validate_pinned(entries, pinned, host["slug"])
     total = sum(e["count"] for e in entries)
     bunny_count = sum(e["count"] for e in entries if e["has_bunny"])
@@ -654,7 +653,7 @@ def generate_variant(host: dict, bracket: str, sync_dck: bool = False):
     print(f"Saved preview to: {preview_file}")
 
     if sync_dck:
-        sync_dck_printings(host_dir, bracket, entries, theme)
+        sync_dck_printings(host_dir, entries, theme)
 
 
 def load_hosts() -> dict:
@@ -671,19 +670,11 @@ def load_hosts() -> dict:
             with manifest.open("rb") as manifest_file:
                 config = tomllib.load(manifest_file)
         else:
-            config = {"brackets": ["b3"]}
+            config = {}
         config.setdefault("mosaic", {})["pinned"] = list(mosaic_order.get(slug, []))
         config["image_language"] = image_languages
         hosts[slug] = {"slug": slug, "dir": host_dir, "config": config}
     return hosts
-
-
-def host_brackets(host: dict) -> list:
-    """Brackets declared in the manifest, else discovered from decklists."""
-    brackets = host["config"].get("brackets")
-    if brackets:
-        return list(brackets)
-    return ["b3"] if (host["dir"] / "decklist.dck").exists() else []
 
 
 def host_theme_file(host: dict):
@@ -704,7 +695,6 @@ def main():
     sync_dck = "--sync-dck" in args
     args = [a for a in args if not a.startswith("--")]
     host_arg = args[0].lower() if len(args) >= 1 else None
-    bracket_arg = args[1].lower() if len(args) >= 2 else None
 
     if host_arg and host_arg not in hosts:
         print(f"Unknown host '{host_arg}'. Available: {', '.join(sorted(hosts))}.")
@@ -713,15 +703,7 @@ def main():
     selected = [hosts[host_arg]] if host_arg else [hosts[h] for h in sorted(hosts)]
 
     for host in selected:
-        brackets = host_brackets(host)
-        if bracket_arg:
-            if bracket_arg not in brackets:
-                print(f"Unknown bracket '{bracket_arg}' for host "
-                      f"'{host['slug']}'. Available: {', '.join(brackets)}.")
-                sys.exit(1)
-            brackets = [bracket_arg]
-        for bracket in brackets:
-            generate_variant(host, bracket, sync_dck=sync_dck)
+        generate_variant(host, sync_dck=sync_dck)
 
 
 if __name__ == "__main__":

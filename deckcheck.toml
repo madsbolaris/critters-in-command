@@ -26,7 +26,7 @@ hazel = ["Bioengineered Future", "Mimic Vat", "March of the World Ooze"]
 muerra = ["Junktown", "Rose, Cutthroat Raider", "Fiery Emancipation"]
 zoraline = ["Leyline of Hope", "Diabolic Intent", "Exsanguinate"]
 
-[folders.b3]
+[folders]
 baylen = "https://deckcheck.co/app/decklist/BGWUsu6UP324"
 bumbleflower = "https://deckcheck.co/app/decklist/vjAx31t69qBD"
 camellia = "https://deckcheck.co/app/decklist/h3NPa0XXYSOD"

@@ -174,7 +174,7 @@ By deliberate design (a "fair" go-wide beatdown), the deck runs **no assembled i
 
 ## Cohesion Verdict
 
-**Overall power: high (strong Bracket 4).** A tuned Naya rabbit-token deck: ramp out → flood the board with Hare Apparents → multiply with a stack of doublers → convert the width into mana, cards, and a one-swing kill via Baylen and an overrun. Consistency and protection are its standout stats; a deliberate lack of infinite combos keeps it fair.
+**Overall power: high.** A tuned Naya rabbit-token deck: ramp out → flood the board with Hare Apparents → multiply with a stack of doublers → convert the width into mana, cards, and a one-swing kill via Baylen and an overrun. Consistency and protection are its standout stats; a deliberate lack of infinite combos keeps it fair.
 
 ### Strengths
 - **Elite token redundancy.** Ten Hare Apparents plus a half-dozen other makers mean the board rebuilds itself, and the multiplicative doublers (Parallel Lives, Mondrak, Anointed Procession, Ojer Taq) make any of them explosive. Thrumming Stone gives each Hare cast a chance to chain into more copies for free.

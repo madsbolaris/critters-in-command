@@ -171,7 +171,7 @@ Three-color Bant fixing: **Command Tower / City of Brass** (any color), **Tundra
 
 ## Cohesion Verdict
 
-**Overall power: high (strong Bracket 4).** A focused, redundant Bant mill-control deck: ramp out → deploy an "everyone draws" engine → turn that generosity lethal with Psychic Corrosion / the Tutelages (doubled by Bruvac) → survive behind a deep pillow fort and, now, a real counter suite until the table decks out or Mind Over Matter ends it outright.
+**Overall power: high.** A focused, redundant Bant mill-control deck: ramp out → deploy an "everyone draws" engine → turn that generosity lethal with Psychic Corrosion / the Tutelages (doubled by Bruvac) → survive behind a deep pillow fort and, now, a real counter suite until the table decks out or Mind Over Matter ends it outright.
 
 ### Strengths
 - **A real, redundant wincon engine.** Multiple "on-draw" mill payoffs + Bruvac as a multiplier, fed by one of the deepest draw suites you'll see. One sweep doesn't turn it off — and **Replenish + Hall of Heliod's Generosity** rebuild the enchantments if it does.

@@ -1,17 +1,18 @@
-# Somebunny Has to Pay for This
+# Ms. Bumbleflower
 
 | | |
 |---|---|
 | **Commander** | [Ms. Bumbleflower](https://scryfall.com/card/blc/103) |
 | **Colors** | Bant (White / Blue / Green) |
 | **Archetype** | Group-hug mill and draw punishment |
-| **Bracket** | 4 — Optimized (Game-Changer-dense, but a slow clock; not cEDH) |
 | **Good against** | Slow midrange and control decks, draw-heavy strategies, and decks that aggressively tutor through their libraries |
 | **Struggles against** | Graveyard decks that benefit from being milled, shuffle effects that restore the library, draw-denial effects, and fast combo decks that exploit the extra cards |
 
+## Somebunny Has to Pay for This
+
 [Ms. Bumbleflower](https://scryfall.com/card/blc/103) has found the one. She has only one demand: everybunny *must* be there to **[Savor the Moment](https://scryfall.com/card/sld/1006)** when she says “I do.” Not at just one ceremony, of course—that would never do. She wants memories to last a lifetime, so she books the whole world.
 
-Everybunny enjoys the first few ceremonies, raising a toast to a love as enduring as [Teferi’s Ageless Insight](https://scryfall.com/card/mkc/119). A little [Exploration](https://scryfall.com/card/cns/164) here, an irresistible [Tempt with Discovery](https://scryfall.com/card/blc/124) there, and soon a honeymoon blossoms into genuine [Long-Term Plans](https://scryfall.com/card/scg/38). The [Otherworld Atlas](https://scryfall.com/card/avr/219) never closes, its pages filling with one dream destination after another, and everybunny’s [Fascination](https://scryfall.com/card/frf/34) with what’s next only grows.
+Everybunny enjoys the ceremonies once they begin, raising a toast to a love as enduring as [Teferi’s Ageless Insight](https://scryfall.com/card/mkc/119). A little [Exploration](https://scryfall.com/card/cns/164) here, an irresistible [Tempt with Discovery](https://scryfall.com/card/blc/124) there, and soon a honeymoon blossoms into genuine [Long-Term Plans](https://scryfall.com/card/scg/38). The [Otherworld Atlas](https://scryfall.com/card/avr/219) never closes, its pages filling with one dream destination after another, and everybunny’s [Fascination](https://scryfall.com/card/frf/34) with what’s next only grows.
 
 Before long, the itinerary has tripled, and Ms. Bumbleflower needs an entire team to keep it running. [Kwain](https://scryfall.com/card/cmr/284) handles the logistics, [Nils](https://scryfall.com/card/soc/158) keeps the schedule airtight, and [Selvala](https://scryfall.com/card/cn2/70/selvala-explorer-returned) leads the ever-expanding tours. A [Generous Patron](https://scryfall.com/card/bbd/70) quietly covers today’s tab—for now. [Teferi](https://scryfall.com/search?q=%21%22Teferi%2C+Time+Raveler%22) under his [Tutelage](https://scryfall.com/card/m21/78) refuses to let the schedule slip by so much as a minute, and [Bruvac the Grandiloquent](https://scryfall.com/card/rvr/35), the officiant, delivers the same [Gaea’s Blessing](https://scryfall.com/card/dom/161) for the eighteenth time, only louder, while Ms. Bumbleflower accepts her **[Wedding Ring](https://scryfall.com/card/who/1059)** *again*—nobody has the heart to ask which number this one is.
 
@@ -29,6 +30,10 @@ Everybunny came to celebrate. Everybunny left bankrupt.
 
 **Till deck do us part.**
 
+## The Deck
+
+![Deck mosaic](deck_mosaic_preview.jpg)
+
 ## Deck Resources
 
 * [DeckCheck](https://deckcheck.co/app/decklist/vjAx31t69qBD)
@@ -40,4 +45,3 @@ Everybunny came to celebrate. Everybunny left bankrupt.
 * [Full deck mosaic](deck_mosaic.png)
 * [Back to all decks](../../../README.md)
 
-![Deck mosaic](deck_mosaic_preview.jpg)

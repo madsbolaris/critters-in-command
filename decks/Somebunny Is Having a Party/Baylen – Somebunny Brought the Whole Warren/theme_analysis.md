@@ -165,7 +165,7 @@ Cards swapped out for 1v1 play. Swap back in for pod games (3-4 players).
 
 ## Theme Summary
 
-A Bracket 4, ~100-card Naya rabbit-tribal token-combo deck.
+A ~100-card Naya rabbit-tribal token-combo deck.
 
 - **Rabbits (by creature type):** 9 of 91 unique cards — plus a swarm of rabbit *tokens*.
 - **Rabbit art:** 17 cards, almost all Bloomburrow originals.
@@ -177,19 +177,3 @@ A Bracket 4, ~100-card Naya rabbit-tribal token-combo deck.
 - The tribal core is tight and focused — a small set of true Rabbits that snowball into a board-flooding token swarm.
 - Highest theme density lives in the Creatures and Sorceries; the mana base is the lowest, as expected.
 - Pure-power, low-flavor inclusions (Sol Ring, Chrome Mox, Sylvan Library, Enlightened Tutor, Seedborn Muse) are here to win games, not because they were invited to the party.
-
----
-
-## Bracket 3 Conversion Kit (sideboard)
-
-Swap every **Swap out** card for its paired **Swap in** to drop this Bracket 4 build to a **Bracket 3**-legal deck (**3 or fewer Game Changers**). It's a package swap — the pairings are only for reference; what matters is cutting all seven listed Game Changers and adding all seven sideboard cards. Kept Game Changers: **Gaea's Cradle, Seedborn Muse, Crop Rotation**. None of the swap-ins is a Game Changer. Trade-off: this removes Baylen's repeatable artifact/enchantment hate (Aura Shards); Hour of Reckoning and spot removal (Chaos Warp, Generous Gift, Path to Exile, Swords to Plowshares, Beast Within) stay.
-
-| Swap in | Scryfall | Swap out | Note |
-|---------|----------|----------|------|
-| Jaheira, Friend of the Forest | [🔗](https://scryfall.com/card/clb/237/jaheira-friend-of-the-forest) | Teferi's Protection *(GC)* | Tokens tap for mana, replacing premium protection with another go-wide engine. |
-| Circle of Dreams Druid | [🔗](https://scryfall.com/card/pafr/176s/circle-of-dreams-druid) | Survival of the Fittest *(GC)* | Mana per creature — go-wide ramp. |
-| Idyllic Tutor | [🔗](https://scryfall.com/card/thb/24/idyllic-tutor) | Enlightened Tutor *(GC)* | Enchantment tutor (Parallel Lives, Anointed Procession). |
-| Sylvan Tutor | [🔗](https://scryfall.com/card/j20/8/sylvan-tutor) | Worldly Tutor *(GC)* | Same top-of-library creature tutor. |
-| Congregation at Dawn | [🔗](https://scryfall.com/card/rav/198/congregation-at-dawn) | Aura Shards *(GC)* | Stacks the top three creatures — finds the finisher. |
-| Wayfarer's Bauble | [🔗](https://scryfall.com/card/clb/344/wayfarers-bauble) | Chrome Mox *(GC)* | Ramp + fixing, no card disadvantage. |
-| Sungrass Prairie | [🔗](https://scryfall.com/card/msc/270/sungrass-prairie) | Ancient Tomb *(GC — land)* | Untapped G/W filter land. |

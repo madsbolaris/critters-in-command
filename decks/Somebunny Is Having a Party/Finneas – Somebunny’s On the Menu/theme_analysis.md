@@ -189,25 +189,3 @@ The `Core?` column flags the load-bearing engine pieces (they sort first within 
 ---
 
 *Basic lands (3 Forest, 3 Plains) complete the 100.*
-
----
-
-## Bracket 3 Conversion Kit (sideboard)
-
-Swap every **Swap out** card for its paired **Swap in** to drop this Bracket 4 build to a **Bracket 3**-legal deck (**3 or fewer Game Changers** *and* no fast two-card infinite combos). Package swap; the pairings are only for reference. Kept Game Changers: **Gaea's Cradle, Smothering Tithe, Aura Shards**. The bottom three rows also **break the deck's early two-card infinite combos** (Bracket 3 discourages cheap, tutored combo kills). No board wipe is included — the go-wide plan runs value creatures instead.
-
-| Swap in | Scryfall | Swap out | Note |
-|---------|----------|----------|------|
-| Sylvan Tutor | [🔗](https://scryfall.com/card/j20/8/sylvan-tutor) | Worldly Tutor *(GC)* | Creature tutor, off the list. |
-| Congregation at Dawn | [🔗](https://scryfall.com/card/rav/198/congregation-at-dawn) | Survival of the Fittest *(GC)* | Stacks the top three creatures. |
-| Sterling Grove | [🔗](https://scryfall.com/card/mh2/293/sterling-grove) | Enlightened Tutor *(GC)* | Enchantment tutor (Talents, Cathars' Crusade). |
-| Clever Concealment | [🔗](https://scryfall.com/card/onc/5/clever-concealment) | Teferi's Protection *(GC)* | Protects your whole board. |
-| Mind Stone | [🔗](https://scryfall.com/card/soc/352/mind-stone) | Mox Diamond *(GC)* | Rock + late draw. |
-| Wayfarer's Bauble | [🔗](https://scryfall.com/card/40k/261★/wayfarers-bauble) | Chrome Mox *(GC)* | Ramp + fixing. |
-| Burrowguard Mentor | [🔗](https://scryfall.com/card/blb/206/burrowguard-mentor) | Farewell *(GC)* | Rabbit token + anthem (go-wide runs no symmetric wipe). |
-| Castle Ardenvale | [🔗](https://scryfall.com/card/tdc/346/castle-ardenvale) | Field of the Dead *(GC — land)* | Token-making land. |
-| Krosan Verge | [🔗](https://scryfall.com/card/mkc/271/krosan-verge) | Crop Rotation *(GC)* | Ramp land (fetches Forest + Plains). |
-| Bonders' Enclave | [🔗](https://scryfall.com/card/otc/274/bonders-enclave) | Ancient Tomb *(GC — land)* | Pay-to-draw card-advantage land. |
-| Conclave Mentor | [🔗](https://scryfall.com/card/plst/M21-216/conclave-mentor) | Spike Feeder *(2-card combo)* | Fair counter payoff — breaks Heliod + Spike Feeder. |
-| Good-Fortune Unicorn | [🔗](https://scryfall.com/card/fdn/240/good-fortune-unicorn) | Scurry Oak *(2-card combo)* | Counter on each token — breaks Scurry Oak + Rosie Cotton. |
-| Scavenging Ooze | [🔗](https://scryfall.com/card/pdp14/3/scavenging-ooze) | Herd Baloth *(2-card combo)* | Grows on +1/+1 counters and gains life — a fair beater (plus graveyard hate) that replaces the combo piece. |

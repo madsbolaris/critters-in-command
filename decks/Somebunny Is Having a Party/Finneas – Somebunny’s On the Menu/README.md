@@ -17,7 +17,6 @@ Finneas finally draws his bow, but [Silence](https://scryfall.com/search?q=%21%2
 **Bunny appétit.**
 
 * **Deck type:** Selesnya tokens, +1/+1 counters, lifegain, and creature combo
-* **Bracket:** 4 — Optimized, high end (real compact combos like Heliod + Spike Feeder)
 * **Good against:** Aggressive and damage-based decks, fair creature strategies, and decks relying on spot removal to control the board
 * **Struggles against:** Repeated exile or bounce sweepers, effects that prevent lifegain or counters, pillow-fort strategies, and faster noncombat combo decks
 

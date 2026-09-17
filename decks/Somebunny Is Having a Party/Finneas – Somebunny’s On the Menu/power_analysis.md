@@ -87,7 +87,7 @@ Baylen is an explosive Hare-tribal stampede that dumps a board and swings once w
 ---
 
 ## Combo note
-**Heliod, Sun-Crowned + Spike Feeder** makes infinite life, which becomes a win with **Felidar Sovereign** (40-life upkeep) or infinite +1/+1 counters with **Archangel of Thune**. All pieces are on-theme lifegain/counter cards that earn their slots anyway, giving the deck an inevitability button without a dedicated combo package. Appropriate for Bracket 4.
+**Heliod, Sun-Crowned + Spike Feeder** makes infinite life, which becomes a win with **Felidar Sovereign** (40-life upkeep) or infinite +1/+1 counters with **Archangel of Thune**. All pieces are on-theme lifegain/counter cards that earn their slots anyway, giving the deck an inevitability button without a dedicated combo package.
 
 ## Verdict
 Focused and redundant: a Food battery feeds a lifegain-into-counters machine, three doublers multiply every token type and Food, and Finneas plus Cathars'/Master Chef bury a wide Rabbit board in permanent counters. It grinds and stabilizes (lifelink + Food + protection) where Baylen races, and keeps a soft combo for closing. Weaknesses: a few of the small Rabbits are role-players rather than bombs, and an un-answered wipe on an empty hand still stings — mitigated by The Ozolith, Resourceful Defense, six protection/insurance cards, and the sheer volume of Food to rebuild on.

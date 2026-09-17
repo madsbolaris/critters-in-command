@@ -4,7 +4,6 @@ host = "Ms. Bumbleflower"
 commander = "Ms. Bumbleflower"
 tagline = "Ms. Bumbleflower's dream wedding circles the entire globe — and every guest is footing the bill. Attendance is mandatory."
 strategy = "Bant (G/W/U) hyper-draw combo-control: a massive draw suite (Rhystic Study, Consecrated Sphinx, The One Ring) over a very high land count blazes through the deck to find a win—usually Approach of the Second Sun or combo (Mind Over Matter + Temple Bell/Folio of Fancies, or Jace, Wielder of Mysteries). The Psychic Corrosion / Tutelages mill just makes it look like group-hug. Bumbleflower's per-spell draws speed it up, but she isn't needed to win—the wincons close without her, behind a pillow fort."
-brackets = ["b3"]
 
 [mosaic]
 # A card is "highlighted" (🐰 marker + sorts first within its color/type group) when

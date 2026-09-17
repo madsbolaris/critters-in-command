@@ -66,14 +66,14 @@ decks/
 
 DeckCheck is the source of truth for deck membership and printings. Map each
 stable slug to its grouped directory under `[paths]` and its public URL under
-`[folders.b3]` in [deckcheck.toml](deckcheck.toml):
+`[folders]` in [deckcheck.toml](deckcheck.toml):
 
 ```toml
 [paths]
 baylen = "Somebunny Is Having a Party/Baylen – Somebunny Brought the Whole Warren"
 
-[folders.b3]
-baylen = "https://deckcheck.co/app/decklist/B3_PUBLIC_ID"
+[folders]
+baylen = "https://deckcheck.co/app/decklist/PUBLIC_ID"
 ```
 
 `[mosaic_order]` gives the exact order of every non-commander visually
@@ -101,10 +101,7 @@ selected in DeckCheck are downloaded
 to the shared `card_images/<set>_<collector>.jpg` cache unless `--no-images` is
 passed. Text exports and mosaics are regenerated after a successful sync unless
 `--no-artifacts` is passed. Fetch, configuration, deck size, visibility, format,
-image, artifact, and bracket errors exit with status 2.
-
-The manifest bracket is authoritative. If DeckCheck's computed bracket differs,
-the script prints a warning but still syncs the deck.
+image, and artifact errors exit with status 2.
 
 DeckCheck does not document a public profile or folder-list endpoint, and its
 API policy disallows scraping. Consequently, newly published decks must be
