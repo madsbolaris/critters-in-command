@@ -1,6 +1,6 @@
 1 Baylen, the Haymaker
 
-1 Ancient Tomb
+1 Abundant Growth
 1 Anointed Procession
 1 Arcane Signet
 1 Arid Mesa
@@ -12,23 +12,22 @@
 1 Branchloft Pathway
 1 Brushland
 1 Caretaker's Talent
+1 Cavern of Souls
 1 Chaos Warp
 1 Chord of Calling
-1 Chrome Mox
+1 City of Brass
 1 Clever Concealment
 1 Command Tower
 1 Craterhoof Behemoth
-1 Crop Rotation
+1 Dawn's Truce
 1 Deflecting Swat
+1 Delighted Halfling
 1 Doubling Season
 1 Eiganjo, Seat of the Empire
 1 Eladamri's Call
 1 Enduring Vitality
-1 Enlightened Tutor
-1 Farewell
 1 Farmer Cotton
 1 Finale of Devastation
-1 Finale of Glory
 1 Flawless Maneuver
 1 Flooded Strand
 1 For the Common Good
@@ -37,27 +36,27 @@
 1 Generous Gift
 1 Grand Crescendo
 1 Halo Fountain
-10 Hare Apparent
+12 Hare Apparent
 1 Harvestrite Host
 1 Head of the Homestead
 1 Heroic Intervention
 1 Hop to It
 1 Horizon Canopy
+1 Hour of Reckoning
 1 Impact Tremors
 1 Jacked Rabbit
 1 Jetmir, Nexus of Revels
 1 Karplusan Forest
 1 Mana Confluence
 1 March of the Multitudes
-1 Misty Rainforest
-1 Mondrak, Glory Dominus
-1 Mox Diamond
 1 Nykthos, Shrine to Nyx
-1 Ojer Taq, Deepest Foundation
+1 Panharmonicon
+1 Parallel Lives
 1 Path to Exile
 1 Pawpatch Formation
-2 Plains
+3 Plains
 1 Plateau
+1 Raise the Past
 1 Reflecting Pool
 1 Regal Bunnicorn
 1 Sacred Foundry
@@ -67,38 +66,22 @@
 1 Secure the Wastes
 1 Seedborn Muse
 1 Skullclamp
-1 Sokenzan, Crucible of Defiance
 1 Sol Ring
 1 Springleaf Parade
 1 Stomping Ground
-1 Survival of the Fittest
+1 Sungrass Prairie
 1 Swords to Plowshares
 1 Sylvan Library
 1 Taiga
-1 Teferi's Protection
 1 Temple Garden
 1 The Great Henge
-1 The Shire
-1 Tocasia's Welcome
+1 Three Tree City
+1 Three Visits
+1 Thrumming Stone
 1 Utopia Sprawl
 1 Valley Questcaller
-1 Verdant Catacombs
+1 Vitalize
 1 Warren Warleader
 1 Windswept Heath
 1 Wooded Bastion
 1 Wooded Foothills
-1 Worldly Tutor
-
-Sideboard
-1 Bountiful Promenade
-1 Spectator Seating
-1 Spire Garden
-1 Jaheira, Friend of the Forest
-1 Circle of Dreams Druid
-1 Idyllic Tutor
-1 Sylvan Tutor
-1 Congregation at Dawn
-1 Sterling Grove
-1 Mind Stone
-1 Wayfarer's Bauble
-1 Sungrass Prairie

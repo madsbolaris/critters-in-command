@@ -3,10 +3,10 @@ name = "Somebunny Brought the Whole Warren"
 host = "Baylen, the Haymaker"
 commander = "Baylen, the Haymaker"
 tagline = "Everybunny's invited. Not everybunny leaves."
-strategy = "Naya rabbit tribal — go wide with tokens, then flip the table with an overrun."
-brackets = ["b4"]
+strategy = "Explosive Naya (R/G/W) go-wide rabbit tribal that snowballs fast, often winning by turn 4-5 via Halo Fountain's alternate win (untap a wide board tapped by Baylen); an overrun (Craterhoof, Finale of Devastation) is the backup. Flood the field with cheap rabbit tokens and multiply with doublers (Parallel Lives, Mondrak, Ojer Taq). With Enduring Vitality and Seedborn Muse untapping every turn, Baylen digs the whole deck and funds it all with mana."
+brackets = ["b3"]
 
-# Extra cards bought as foil (beyond the commander + pinned trio).
+# Extra cards bought as foil beyond the commander and featured trio.
 extra_foils = ["Finale of Devastation", "Grand Crescendo"]
 
 [mosaic]
@@ -15,5 +15,3 @@ extra_foils = ["Finale of Devastation", "Grand Crescendo"]
 highlight_columns = ["Rabbit?", "Rabbit Art?"]
 # Cards forced to the end of their color section instead of sorting with their type.
 end_of_color = ["Hare Apparent"]
-# Cards pinned to the front of the mosaic (right after the commander), in this exact order.
-pinned = ["The Great Henge", "Halo Fountain", "Craterhoof Behemoth"]

@@ -39,14 +39,15 @@ Ramp · Fix · Token (makes tokens) · Mult (token doubler/tripler) · Payoff (t
 
 ---
 
-## Token doublers & multipliers (4)
+## Token multipliers & Hare chain (5)
 
 | Card | Role | Power | Note |
 |------|------|:-----:|------|
-| Doubling Season | Mult | 8 | Doubles tokens **and** counters — the premium multiplier, and it turbo-charges The Great Henge and Caretaker's Talent's copy mode too. |
+| Parallel Lives | Mult | 7 | Clean token doubler; stacks multiplicatively with the others. |
 | Mondrak, Glory Dominus | Mult | 8 | Token doubler with built-in self-protection (sacrifice two permanents for indestructible) so it survives the wrath that would reset the board. |
 | Anointed Procession | Mult | 7 | Clean token doubler; stacks multiplicatively with the others. |
 | Ojer Taq, Deepest Foundation | Mult | 7 | Token **tripler** — the single biggest multiplier — and it flips to a land that keeps making Citizens when it dies. |
+| Thrumming Stone | Hare chain | 8 | Gives every spell ripple 4; with ten Hare Apparents, each Hare cast can reveal and cast more copies for free, rapidly building the tribal core. |
 
 ---
 
@@ -63,7 +64,7 @@ Ramp · Fix · Token (makes tokens) · Mult (token doubler/tripler) · Payoff (t
 
 ---
 
-## Token-maker spells (9)
+## Token-maker spells (8)
 
 | Card | Role | Power | Note |
 |------|------|:-----:|------|
@@ -72,14 +73,13 @@ Ramp · Fix · Token (makes tokens) · Mult (token doubler/tripler) · Payoff (t
 | Grand Crescendo | Token / Protect | 6 | X 1/1 Citizens **and** team indestructible until end of turn — a token spell that doubles as a wrath dodge. |
 | For the Common Good | Token / Protect | 6 | X copies of your best token, each indestructible until your next turn — width plus protection. |
 | March of the Multitudes | Token | 6 | Instant-speed convoke lifelink tokens — dodges sorcery-speed wraths and answers a board state. |
-| Finale of Glory | Token | 6 | X 2/2 vigilant Soldiers (plus X 4/4 flying Angels at X≥10) — a scalable one-card board that mirrors Finale of Devastation and doubles under your multipliers. |
 | Awaken the Woods | Token / Ramp | 6 | X 1/1 Forest Dryad *lands* — bodies and mana in a single card that scale with your ramp, recover after a wipe, and go absurd under the doublers. |
 | Season of the Burrow | Token / Modal / Recur | 6 | Five modes — a token, a pump, exile a threat, or **return a creature from the grave** — flexible glue with a recursion mode. |
 | Hop to It | Token | 5 | Three Rabbits for three mana — simple width that a doubler turns into a March of the Multitudes. |
 
 ---
 
-## Ramp, fast mana & mana engines (10)
+## Ramp, fast mana & mana engines (9)
 
 | Card | Role | Power | Note |
 |------|------|:-----:|------|
@@ -87,7 +87,6 @@ Ramp · Fix · Token (makes tokens) · Mult (token doubler/tripler) · Payoff (t
 | Seedborn Muse | Ramp / Engine | 8 | Untaps every permanent on each opponent's turn — Baylen fills the snack bowl, draws, and pumps every turn of the table, and Gaea's Cradle refuels between rounds. Do not cut. |
 | Birds of Paradise | Ramp + Fix | 8 | T1 any-color dork that fixes the Naya spread. |
 | Arcane Signet | Ramp + Fix | 7 | Clean on-color rock. |
-| Mox Diamond | Ramp | 7 | Free fast mana at a land's cost — mild tension with the 31-land count. |
 | Jaheira, Friend of the Forest | Ramp | 7 | Your token creatures each tap for any color — a second Gaea's Cradle that pours straight into Finale/Craterhoof. |
 | Enduring Vitality | Ramp | 7 | Every creature you control taps for mana, and it recurs itself as an enchantment when the board is wiped. |
 | Springleaf Parade | Ramp / Token | 6 | X changeling Shapeshifter tokens (which count as Rabbits) **and** a standing rule that every token you control taps for any color — a second Gaea's Cradle that also widens the board and stands alone without any particular payoff. |
@@ -116,7 +115,7 @@ Ramp · Fix · Token (makes tokens) · Mult (token doubler/tripler) · Payoff (t
 | The Great Henge | Draw / Ramp | 9 | Cheap in a creature deck; ramps, gains life, and draws a card + adds a counter on every creature ETB. Busted in a token flood. |
 | Skullclamp | Draw engine | 8 | Clamp a spare 1/1, it dies, draw two — a bottomless hand off your excess tokens, and refuel after a wipe. |
 | Sylvan Library | Draw | 7 | Premium selection and advantage. |
-| Tocasia's Welcome | Draw | 6 | A card for every small (MV ≤ 3) creature that arrives — the door never stops swinging in a 1/1 deck. |
+| Welcoming Vampire | Draw | 7 | Draws once each turn when a power-2-or-less creature enters; instant-speed token makers can trigger it around the table. |
 
 ---
 
@@ -126,7 +125,7 @@ Ramp · Fix · Token (makes tokens) · Mult (token doubler/tripler) · Payoff (t
 |------|------|:-----:|------|
 | Swords to Plowshares | Removal | 9 | Premium spot removal. |
 | Path to Exile | Removal | 8 | Efficient, unconditional exile. |
-| Farewell | Sweeper | 8 | Modal exile of creatures, artifacts, enchantments, and graveyards — cast behind Teferi's Protection to clip only opponents. |
+| Hour of Reckoning | Sweeper | 8 | Convoke makes the seven-mana cost manageable, then it destroys all nontoken creatures while preserving the deck's wide token board. |
 | Generous Gift | Removal | 7 | Destroy any permanent at instant speed; the 3/3 is trivial. |
 | Chaos Warp | Removal | 7 | The blueless catch-all — tucks anything, beating indestructible and regeneration. |
 | Aura Shards | Removal | 7 | Repeatable artifact/enchantment removal off every creature ETB — the deck's answer to **Blood Moon, Winter Orb, and Cursed Totem** (the hosers a 2-basic Naya deck fears). |
@@ -148,19 +147,20 @@ Ramp · Fix · Token (makes tokens) · Mult (token doubler/tripler) · Payoff (t
 
 ---
 
-## Resilience & recursion (1)
+## Resilience & recursion (2)
 
 | Card | Role | Power | Note |
 |------|------|:-----:|------|
 | Assemble the Legion | Recur / Engine | 7 | A wipe-proof token engine — it lives in the enchantment zone, so after a sweep it rebuilds the board by itself, wider each turn. |
+| Raise the Past | Recur | 7 | Mass recursion for every MV 2-or-less creature, including all ten Hare Apparents and several tribal support pieces. |
 
-> Plus the instant-speed maker **Secure the Wastes** refills an empty board at flash speed and **Finale of Glory** rebuilds a wide board in a single card, giving the combat plan real recovery without leaning on the graveyard.
+> Plus the instant-speed maker **Secure the Wastes** refills an empty board at flash speed, giving the combat plan recovery on both graveyard and non-graveyard axes.
 
 ---
 
 ## Manabase (31 lands)
 
-Naya fixing built for speed: **Command Tower / Mana Confluence / City-tier any-color**, the **ABUR duals (Savannah, Plateau, Taiga)**, **shock lands (Temple Garden, Sacred Foundry, Stomping Ground)**, checks/fasts/pathways (**Fortified Village, Razorverge Thicket, Branchloft Pathway, Wooded Bastion**), untapped pain/utility (**Brushland, Horizon Canopy**), a **triome (Jetmir's Garden)**, **five fetches** (Flooded Strand, Windswept Heath, Wooded Foothills, Arid Mesa, Verdant Catacombs, Misty Rainforest), ramp lands (**Ancient Tomb, Gaea's Cradle** — a payoff for the wide board, **Nykthos** — devotion), token/utility lands (**Sokenzan, The Shire, Reflecting Pool**), and channel lands (**Boseiju, Eiganjo**). Just **2 basics** (Plains, Forest).
+Naya fixing built for speed: **Command Tower, Mana Confluence, City of Brass**, the **ABUR duals (Savannah, Plateau, Taiga)**, **shock lands (Temple Garden, Sacred Foundry, Stomping Ground)**, **Branchloft Pathway and Wooded Bastion**, untapped pain/utility (**Brushland, Horizon Canopy**), **four fetches** (Flooded Strand, Windswept Heath, Wooded Foothills, Arid Mesa), ramp lands (**Ancient Tomb, Gaea's Cradle, Nykthos, Three Tree City**), tribal protection/fixing (**Cavern of Souls**), and utility/channel lands (**Sokenzan, Reflecting Pool, Boseiju, Eiganjo**). Just **4 basics** (2 Plains, 2 Forests).
 
 **Assessment:** excellent fixing and genuinely fast — Ancient Tomb + Sol Ring + dorks routinely curve Baylen out early. **Gaea's Cradle scales with the token board** and can produce absurd mana for a Finale/Craterhoof turn. The one real fragility is the **2-basic count**: Blood Moon, Back to Basics, or Magus of the Moon hurt more than the budget suggests, and **Aura Shards** (plus Boseiju/Chaos Warp) is the deck's main out. Swapping Nykthos (a mediocre devotion land here) for a basic would harden it at little cost.
 
@@ -177,15 +177,15 @@ By deliberate design (a "fair" go-wide beatdown), the deck runs **no assembled i
 **Overall power: high (strong Bracket 4).** A tuned Naya rabbit-token deck: ramp out → flood the board with Hare Apparents → multiply with a stack of doublers → convert the width into mana, cards, and a one-swing kill via Baylen and an overrun. Consistency and protection are its standout stats; a deliberate lack of infinite combos keeps it fair.
 
 ### Strengths
-- **Elite token redundancy.** Ten Hare Apparents plus a half-dozen other makers mean the board rebuilds itself, and the multiplicative doublers (Doubling Season, Mondrak, Anointed Procession, Ojer Taq) make any of them explosive.
+- **Elite token redundancy.** Ten Hare Apparents plus a half-dozen other makers mean the board rebuilds itself, and the multiplicative doublers (Parallel Lives, Mondrak, Anointed Procession, Ojer Taq) make any of them explosive. Thrumming Stone gives each Hare cast a chance to chain into more copies for free.
 - **High consistency.** Survival of the Fittest + Chord + Eladamri's Call + Finale + Enlightened + Worldly is a deep tutor suite, and Skullclamp + The Great Henge keep the hand full — the reason CON reads so high.
 - **Deep protection.** Five-plus board-level effects (Teferi's Protection, Heroic Intervention, Flawless Maneuver, Clever Concealment, Grand Crescendo/For the Common Good) make the wide board very hard to sweep.
 - **A fast, redundant kill.** Craterhoof, Finale, Jetmir, Halo Fountain, and Impact Tremors are five ways to close — the deck curves a real threat by turn 5–6.
-- **Real rebuild.** Assemble the Legion (wipe-proof) plus instant-speed Secure the Wastes and a one-card Finale of Glory give the combat plan resilience against board wipes without adding a combo.
+- **Real rebuild.** Assemble the Legion (wipe-proof), instant-speed Secure the Wastes, and Raise the Past give the combat plan resilience against board wipes without adding a combo.
 
 ### Weaknesses / risks
 1. **No infinite combo — Resilience caps on the combat path.** A deliberate choice, but it means a grindy control deck can answer the board repeatedly; the recursion package mitigates, not eliminates, this.
-2. **Thin basics.** Only 2 basics behind 5 fetches — Blood Moon / Back to Basics bite hard. Aura Shards is the out; a Nykthos → basic swap would help.
+2. **Thin basics.** Only 4 basics behind 4 fetches — Blood Moon / Back to Basics still bite. Aura Shards is the main out; a Nykthos → basic swap would help further.
 3. **Commander-leaning mana/pump.** Baylen taps *tokens* (not dorks) for mana and pump; Cursed Totem taxes his activated ability. The deck still wins through combat + Enduring Vitality/Cradle, so it's annoying, not fatal.
 4. **Graveyard-based recursion.** Season of the Burrow's recursion mode leans on the yard; Rest in Peace blanks it (Assemble and the token engine do not).
 5. **Over-doubler draws.** With four multipliers, some hands draw doublers without enough bodies — Skullclamp and the tutor suite are the mitigation, and trimming a doubler was considered but kept for the ceiling.
