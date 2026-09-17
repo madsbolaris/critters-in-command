@@ -1,0 +1,97 @@
+Commander
+1 Hazel of the Rootbloom (BLC) 102
+
+1 Abrupt Decay (MM3) 146
+1 Arcane Signet (PF25) 10
+1 Assassin's Trophy (SOC) 294
+1 Bayou (SUM) 283
+1 Beseech the Mirror (WOE) 82
+1 Bioengineered Future (EOE) 340
+1 Biogenic Ooze (TMC) 49
+1 Biophagus (40K) 87
+1 Biotransference (40K) 30
+1 Biowaste Blob (CMR) 219
+1 Birthing Pod (NPH) 104
+1 Birthing Ritual (MH3) 146
+1 Bloodstained Mire (MH3) 216
+1 Blooming Marsh (OTJ) 266
+1 Boseiju, Who Endures (NEO) 266
+1 Bramble Sovereign (CLB) 218
+1 Buried Ruin (EOC) 150
+1 Cankerbloom (ONE) 161
+1 Cauldron of Essence (SOS) 179
+1 Chord of Calling (M15) 172
+1 Command Tower (MSC) 233
+1 Contagion (ALL) 45
+1 Contagion Engine (SOM) 145
+1 Cryptolith Rite (INR) 189
+1 Defense Grid (ULG) 125
+1 Deserted Temple (MH3) 301
+1 Diabolic Intent (BRO) 89
+1 Doubling Season (FDN) 216
+1 Eldritch Evolution (INR) 195
+1 Endrek Sahr, Master Breeder (CMM) 155
+1 Evolution Witness (MH3) 151
+1 Evolutionary Leap (NCC) 288
+5 Forest (TRK) 325
+1 Gaea's Cradle (USG) 321
+1 Greater Good (MSC) 174
+1 Green Slime (CLB) 680
+1 Guardian Project (RVR) 146
+1 Heroic Intervention (AFC) 161
+1 High Market (SOC) 380
+1 Incubation Druid (MOC) 302
+1 Inventors' Fair (KLD) 247
+1 Kinetic Ooze (SOC) 39
+1 Kinzu of the Bleak Coven (ONE) 406
+1 Lithoform Engine (ZNR) 245
+1 Malakir Rebirth (ZNR) 111
+1 Mana Vault (2X2) 308
+1 March of the World Ooze (DFT) 388
+1 Marsh Flats (MH2) 248
+1 Mimic Vat (LCC) 115
+1 Mirrorworks (C18) 211
+1 Misty Rainforest (MH2) 250
+1 Mitotic Slime (NCC) 302
+1 Mutagen Man, Living Ooze (TMT) 124
+1 Necrotic Ooze (2X2) 83
+1 Nurturing Peatland (MH1) 243
+1 Ooze Garden (ALA) 143
+1 Overgrown Tomb (TRK) 289
+1 Parallel Lives (ISD) 199
+1 Phyrexian Reclamation (TDC) 194
+1 Phyrexian Tower (MH3) 303
+1 Pithing Needle (MID) 257
+1 Plague Engineer (MH1) 100
+1 Polluted Delta (MH3) 224
+1 Praetor's Grasp (NPH) 71
+1 Protean Hulk (RVR) 153
+1 Reanimate (DSC) 155
+1 Rootcast Apprenticeship (BLC) 32
+1 Saw in Half (BLC) 113
+1 Scavenging Ooze (FDN) 232
+1 Shifting Woodland (MH3) 228
+1 Skullclamp (MOC) 379
+1 Sol Ring (MSC) 213
+1 Soul Foundry (C19) 223
+1 South Wind Avatar (TMT) 78
+1 Survival of the Fittest (G09) 4
+2 Swamp (TRK) 321
+1 Sylvan Library (DMR) 179
+1 Takenuma, Abandoned Mire (NEO) 278
+1 Three Tree City (BLB) 260
+1 Three Visits (MSC) 181
+1 Toxic Deluge (SOC) 120
+1 Triumph of the Hordes (NPH) 123
+1 Twilight Mire (SOC) 418
+1 Undergrowth Stadium (TMC) 80
+1 Unnatural Growth (INR) 223
+1 Urborg, Tomb of Yawgmoth (TSR) 287
+1 Urza's Saga (MH2) 259
+1 Utopia Sprawl (RVR) 159
+1 Verdant Catacombs (MH2) 260
+1 Volrath's Stronghold (STH) 143
+1 Windswept Heath (MH3) 235
+1 Wooded Foothills (MH3) 236
+1 Yavimaya, Cradle of Growth (MH2) 261
+1 Yawgmoth, Thran Physician (DMR) 110
