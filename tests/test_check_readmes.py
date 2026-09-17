@@ -65,22 +65,52 @@ class FindUncoveredCardsTests(unittest.TestCase):
 
     def test_mentioned_cards_are_not_reported(self):
         text = "[Caretaker's Talent](https://scryfall.com/card/blb/6/caretakers-talent) keeps everyone fed."
-        uncovered = check_readmes.find_uncovered_cards(text, self.cards)
-        self.assertNotIn("Caretaker's Talent", uncovered)
+        names = [name for name, _count in check_readmes.find_uncovered_cards(text, self.cards)]
+        self.assertNotIn("Caretaker's Talent", names)
 
     def test_unmentioned_nonland_cards_are_reported(self):
-        uncovered = check_readmes.find_uncovered_cards("No links here.", self.cards)
-        self.assertIn("The Great Henge", uncovered)
-        self.assertIn("Caretaker's Talent", uncovered)
+        names = [name for name, _count in check_readmes.find_uncovered_cards("No links here.", self.cards)]
+        self.assertIn("The Great Henge", names)
+        self.assertIn("Caretaker's Talent", names)
 
     def test_basic_lands_are_excluded(self):
-        uncovered = check_readmes.find_uncovered_cards("No links here.", self.cards)
-        self.assertNotIn("Forest", uncovered)
+        names = [name for name, _count in check_readmes.find_uncovered_cards("No links here.", self.cards)]
+        self.assertNotIn("Forest", names)
 
     def test_smart_quote_mentions_still_count_as_covered(self):
         text = "[Caretaker\u2019s Talent](https://scryfall.com/card/blb/6/caretakers-talent) keeps everyone fed."
-        uncovered = check_readmes.find_uncovered_cards(text, self.cards)
-        self.assertNotIn("Caretaker's Talent", uncovered)
+        names = [name for name, _count in check_readmes.find_uncovered_cards(text, self.cards)]
+        self.assertNotIn("Caretaker's Talent", names)
+
+    def test_defaults_to_zero_other_decks_without_global_counts(self):
+        uncovered = dict(check_readmes.find_uncovered_cards("No links here.", self.cards))
+        self.assertEqual(uncovered["The Great Henge"], 0)
+
+    def test_sorted_fewest_other_decks_first(self):
+        global_counts = {
+            check_readmes.normalize_name("Caretaker's Talent"): 4,  # in 3 other decks
+            check_readmes.normalize_name("The Great Henge"): 1,     # deck-unique
+            check_readmes.normalize_name("Test Commander"): 4,      # in 3 other decks
+        }
+        uncovered = dict(check_readmes.find_uncovered_cards("No links here.", self.cards, global_counts))
+        self.assertEqual(uncovered["The Great Henge"], 0)
+        self.assertEqual(uncovered["Caretaker's Talent"], 3)
+        names_in_order = [name for name, _count in
+                           check_readmes.find_uncovered_cards("No links here.", self.cards, global_counts)]
+        self.assertEqual(names_in_order[0], "The Great Henge")
+
+
+class BuildGlobalCardCountsTests(unittest.TestCase):
+    def test_counts_decks_not_copies(self):
+        with tempfile.TemporaryDirectory() as directory:
+            deck_a = Path(directory) / "a"
+            deck_b = Path(directory) / "b"
+            deck_a.mkdir()
+            deck_b.mkdir()
+            write_dck(deck_a)
+            write_dck(deck_b)
+            counts = check_readmes.build_global_card_counts([deck_a, deck_b])
+        self.assertEqual(counts[check_readmes.normalize_name("Caretaker's Talent")], 2)
 
 
 class CheckScryfallLinkTests(unittest.TestCase):

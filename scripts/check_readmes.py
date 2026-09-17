@@ -31,7 +31,9 @@ the same folder):
 Also reported, as a non-fatal ``INFO`` diagnostic, is the reverse gap: cards
 that are in the decklist but never get a mention in the README at all (basic
 lands excluded). This never fails the run — it's just a coverage list to help
-when writing or reworking a deck's flavor text.
+when writing or reworking a deck's flavor text. Each card is annotated with how
+many *other* decks in the repository also play it, sorted fewest-shared-first,
+so the cards most unique to this particular deck bubble to the top.
 
 Usage:
     python scripts/check_readmes.py                  # every deck
@@ -218,14 +220,32 @@ def check_readme(readme_path: Path, deck_dir: Path, cards: DeckCards) -> list[Is
 BASIC_LAND_NAMES = {"plains", "island", "swamp", "mountain", "forest", "wastes"}
 
 
-def find_uncovered_cards(readme_text: str, cards: DeckCards) -> list[str]:
-    """Decklist cards (basic lands excluded) that no README link mentions by name."""
+def build_global_card_counts(deck_dirs: list[Path]) -> dict[str, int]:
+    """Normalized card name -> number of decks (repo-wide) that play it."""
+    counts: dict[str, int] = {}
+    for deck_dir in deck_dirs:
+        cards = parse_decklist(deck_dir / "decklist.dck")
+        for normalized in cards.by_name:
+            counts[normalized] = counts.get(normalized, 0) + 1
+    return counts
+
+
+def find_uncovered_cards(readme_text: str, cards: DeckCards,
+                          global_card_counts: dict[str, int] | None = None) -> list[tuple[str, int]]:
+    """Decklist cards (basic lands excluded) that no README link mentions by name.
+
+    Returns (card name, other-decks-playing-it count) pairs, sorted with the
+    most deck-unique cards (fewest other decks) first.
+    """
+    global_card_counts = global_card_counts or {}
     covered = {normalize_name(match.group(1)) for match in LINK_RE.finditer(readme_text)}
     uncovered = [
-        raw_name for normalized, (raw_name, _set, _number) in cards.by_name.items()
+        (raw_name, global_card_counts.get(normalized, 1) - 1)
+        for normalized, (raw_name, _set, _number) in cards.by_name.items()
         if normalized not in covered and normalized not in BASIC_LAND_NAMES
     ]
-    return sorted(uncovered, key=str.lower)
+    uncovered.sort(key=lambda item: (item[1], item[0].lower()))
+    return uncovered
 
 
 def discover_decks() -> list[Path]:
@@ -245,6 +265,9 @@ def main() -> int:
         print("No decks with both README.md and decklist.dck found.", file=sys.stderr)
         return 1
 
+    # Card-uniqueness counts always span the whole repo, independent of any --decks filter below.
+    global_card_counts = build_global_card_counts(deck_dirs)
+
     if args.decks:
         wanted = [needle.lower() for needle in args.decks]
         deck_dirs = [d for d in deck_dirs if any(needle in d.name.lower() for needle in wanted)]
@@ -257,7 +280,7 @@ def main() -> int:
         cards = parse_decklist(deck_dir / "decklist.dck")
         readme_path = deck_dir / "README.md"
         issues = check_readme(readme_path, deck_dir, cards)
-        uncovered = find_uncovered_cards(readme_path.read_text(encoding="utf-8"), cards)
+        uncovered = find_uncovered_cards(readme_path.read_text(encoding="utf-8"), cards, global_card_counts)
 
         errors = [i for i in issues if i.level == "ERROR"]
         warnings = [i for i in issues if i.level == "WARNING"]
@@ -273,7 +296,9 @@ def main() -> int:
         for issue in warnings:
             print(f"  WARNING: {issue.message}")
         if uncovered:
-            print(f"  INFO: {len(uncovered)} deck card(s) not mentioned in the README: {', '.join(uncovered)}")
+            formatted = [f"{name} ({count} other {'deck' if count == 1 else 'decks'})" for name, count in uncovered]
+            print(f"  INFO: {len(uncovered)} deck card(s) not mentioned in the README "
+                  f"(most deck-unique first): {', '.join(formatted)}")
 
         had_errors = had_errors or bool(errors)
 
