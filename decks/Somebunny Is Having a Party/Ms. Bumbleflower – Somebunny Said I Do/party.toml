@@ -3,8 +3,8 @@ name = "Somebunny Couldn't Say No"
 host = "Ms. Bumbleflower"
 commander = "Ms. Bumbleflower"
 tagline = "Ms. Bumbleflower's dream wedding circles the entire globe — and every guest is footing the bill. Attendance is mandatory."
-strategy = "Bant forced-draw mill — drag every guest on a ruinously expensive around-the-world wedding tour (extra land drops + group draw) until their savings (library) run dry and they go bankrupt."
-brackets = ["b4"]
+strategy = "Bant (G/W/U) hyper-draw combo-control: a massive draw suite (Rhystic Study, Consecrated Sphinx, The One Ring) over a very high land count blazes through the deck to find a win—usually Approach of the Second Sun or combo (Mind Over Matter + Temple Bell/Folio of Fancies, or Jace, Wielder of Mysteries). The Psychic Corrosion / Tutelages mill just makes it look like group-hug. Bumbleflower's per-spell draws speed it up, but she isn't needed to win—the wincons close without her, behind a pillow fort."
+brackets = ["b3"]
 
 [mosaic]
 # A card is "highlighted" (🐰 marker + sorts first within its color/type group) when
@@ -12,5 +12,3 @@ brackets = ["b4"]
 highlight_columns = ["Rabbit?", "Rabbit Art?"]
 # Cards forced to the end of their color section instead of sorting with their type.
 end_of_color = []
-# Cards pinned to the front of the mosaic (right after the commander), in this exact order.
-pinned = ["Wedding Ring", "Savor the Moment", "Smothering Tithe"]
