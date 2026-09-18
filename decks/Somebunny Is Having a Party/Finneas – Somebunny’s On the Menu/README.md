@@ -1,24 +1,40 @@
-# Finneas, Ace Archer — Somebunny’s On the Menu
+# Finneas, Ace Archer
 
-Beneath [Scurry Oak](https://scryfall.com/card/mh2/172), a [Chord of Calling](https://scryfall.com/card/rvr/134/chord-of-calling) invites everybunny to the greatest feast the meadow has ever seen. [Finneas, Ace Archer](https://scryfall.com/card/blb/348) arrives to find [Caretaker’s Talent](https://scryfall.com/card/blb/6) on full display, with [Rosie Cotton of South Lane](https://scryfall.com/card/ltr/27) filling plates and [Quina, Qu Gourmet](https://scryfall.com/card/fin/194) tasting everything twice.
+| | |
+|---|---|
+| **Commander** | [Finneas, Ace Archer](https://scryfall.com/card/blb/348) |
+| **Colors** | Selesnya (White / Green) |
+| **Archetype** | Selesnya tokens, +1/+1 counters, lifegain, and creature combo |
+| **Good against** | Aggressive and damage-based decks, fair creature strategies, and decks relying on spot removal to control the board |
+| **Struggles against** | Repeated exile or bounce sweepers, effects that prevent lifegain or counters, pillow-fort strategies, and faster noncombat combo decks |
 
-A [Gilded Goose](https://scryfall.com/card/blc/83) lays the first course while a [Tireless Provisioner](https://scryfall.com/card/ltc/262) keeps the platters coming. The [Witch’s Oven](https://scryfall.com/card/eld/237) and [Academy Manufactor](https://scryfall.com/card/otc/251) produce more than any kitchen reasonably should, while [Peregrin Took](https://scryfall.com/card/ltr/181) discovers an extra helping beside every helping. A magnificent [Carrot Cake](https://scryfall.com/card/blb/7) waits beneath glass, [Stocking the Pantry](https://scryfall.com/card/blb/194) keeps every dish full, and a [Spike Feeder](https://scryfall.com/card/cmd/172) has somehow fallen asleep in the fruit bowl.
+## Somebunny’s On the Menu
 
-The hospitality remains impeccable even as [Placid Rottentail](https://scryfall.com/card/mom/199) begins carrying abandoned coats toward the pantry. [Byrke, Long Ear of the Law](https://scryfall.com/card/blb/380) opens [The Case of the Uneaten Feast](https://scryfall.com/card/mkm/10), but a [Herd Baloth](https://scryfall.com/card/mh2/165/herd-baloth) makes it clear that the kitchen is not accepting visitors.
+Beneath [Scurry Oak](https://scryfall.com/card/mh2/172), word of a feast grand enough to draw every rabbit in the meadow spreads by [Chord of Calling](https://scryfall.com/card/ea3/6), burrow to burrow. [Finneas](https://scryfall.com/card/blb/348) is among the first to answer, arrow-quick and hungry for a good meal. There is always room at the table for one more guest.
 
-Behind it, [Ashnod’s Altar](https://scryfall.com/search?q=%21%22Ashnod%27s+Altar%22) waits beneath a dangling [Skullclamp](https://scryfall.com/card/tdc/103), while carts from the [High Market](https://scryfall.com/card/soc/380) arrive full and depart empty. The adjoining [Field of the Dead](https://scryfall.com/card/m20/247) keeps the pantry stocked, and [Of Herbs and Stewed Rabbit](https://scryfall.com/card/ltc/17) reveals why the invitation promised room for everybunny.
+To keep up with the crowd, the kitchen never rests. **[Gilded Goose](https://scryfall.com/card/blc/83)** provides a golden egg for the first course, [Tireless Provisioner](https://scryfall.com/card/moc/313) keeps the platters full, and [Quina](https://scryfall.com/card/fin/194) tastes everything twice. [Kitchen Finks](https://scryfall.com/card/uma/216) plates food faster than anyone can eat it, [Innkeeper’s Talent](https://scryfall.com/card/blb/180) churns out delicacies whenever the recipe calls for one, and [Caretaker’s Talent](https://scryfall.com/card/blb/6) keeps the service polished with an inexhaustible supply of helping paws.
 
-[Bess, Soul Nourisher](https://scryfall.com/card/pncc/67p) politely gathers the remaining guests while [Kodama of the West Tree](https://scryfall.com/card/neo/199) closes every woodland path and [Ajani, Strength of the Pride](https://scryfall.com/card/m20/2) guards the doors. [Soul’s Attendant](https://scryfall.com/card/roe/44) welcomes each rabbit forward, only to pass the [Hinterland Sanctifier](https://scryfall.com/card/fdn/730) into the waiting hands of [Emmara, Soul of the Accord](https://scryfall.com/card/grn/168). [Loran’s Escape](https://scryfall.com/card/bro/14), it turns out, was never meant for the diners.
+And what a spread it is. [Peregrin Took](https://scryfall.com/card/ltr/181) keeps a little something extra coming on the side, a [Carrot Cake](https://scryfall.com/card/blb/7) waits beneath a glass dome, and [Stocking the Pantry](https://scryfall.com/card/blb/194) keeps the larder endlessly replenished. A [Nasty Little Rabbit](https://scryfall.com/card/hob/130) has already helped himself to the fruit bowl.
 
-[Enduring Vitality](https://scryfall.com/card/dsk/176/enduring-vitality) keeps every offering distressingly fresh while [Heliod, Sun-Crowned](https://scryfall.com/card/cmm/29) blesses the feast as a [Cathars’ Crusade](https://scryfall.com/card/inr/17). An [Ocelot Pride](https://scryfall.com/card/mh3/38/ocelot-pride) waits beneath the table for scraps as the [Archangel of Thune](https://scryfall.com/card/sld/1337) descends to bless dessert.
+The guests get just as much attention as the food. [Hinterland Sanctifier](https://scryfall.com/card/fdn/730) fusses over each new arrival while [Heliod](https://scryfall.com/card/cmm/29) presides over the feast like a benediction. What began as hospitality has become a [Resourceful Defense](https://scryfall.com/card/eoc/67) against empty stomachs, modest portions, and sensible limits. At the height of the evening, **[Archangel of Thune](https://scryfall.com/card/sld/1337)** rises over the table and gives its blessing, and every guest at the table swells with rude, roaring health.
 
-Finneas finally draws his bow, but [Silence](https://scryfall.com/search?q=%21%22Silence%22) falls as the [Cordyceps Rat King](https://scryfall.com/card/sld/2205) emerges to greet his guests. Everybunny came for dinner; not everybunny understood the invitation.
+Then one guest peers into the pantry and sees [Placid Rottentail](https://scryfall.com/card/mom/199) staring back. They turn pale and bolt into the night, leaving an untouched bowl of stew behind. [Byrke](https://scryfall.com/card/blb/380) notices, and the [Case of the Uneaten Feast](https://scryfall.com/card/mkm/10) begins.
+
+The answer is already simmering in the pot of [Herbs and Stewed Rabbit](https://scryfall.com/card/ltc/17) at the center of the table. Nobody asks which rabbit. Behind the kitchens, a [Herd Baloth](https://scryfall.com/card/mh2/165/herd-baloth) stalks the path to [Death’s Presence](https://scryfall.com/card/40k/212), where guests sent through [High Market](https://scryfall.com/card/soc/380) return as provisions. [Field of the Dead](https://scryfall.com/card/m20/247) ensures that the grounds never run short of fresh bodies. The [Skullclamp](https://scryfall.com/card/tdc/103) hanging beside the butcher’s block is not decorative, but by the time Byrke solves the case, it's already too late. They're all plump, rosy, and ready for the ceremonial sacrifice. [Survival of the Fittest](https://scryfall.com/card/exo/129/survival-of-the-fittest) is in full swing.
+
+Everyone at the head table is in on it. [Bess](https://scryfall.com/card/pncc/67p) keeps the invitations coming faster than the old places can be cleared, [March of the Multitudes](https://scryfall.com/card/ncc/346) fills the tables, and [Trostani](https://scryfall.com/card/c19/204) reassures the nervous.
+
+Once the truth is out, the rest of the staff make sure no one leaves. [Kodama of the West Tree](https://scryfall.com/card/neo/199) hides the routes beneath the roots, concealing how few guests ever take the road home, [Abzan Battle Priest](https://scryfall.com/card/moc/164) guards the door, and the [Grand Abolisher](https://scryfall.com/card/cmm/27) handles anyone who tries to interrupt service. The staff move faster than anyone else at the party—[Lightning Greaves](https://scryfall.com/card/pip/233) see to that. Even Hinterland Sanctifier has been played all along by her own soul sister, [Soul’s Attendant](https://scryfall.com/card/roe/44).
+
+At last, [Silence](https://scryfall.com/card/m14/35) falls. The cellar door opens, and the **[Cordyceps Rat King](https://scryfall.com/card/sld/2205)** climbs the stairs, surveys the feast, and takes his place at the head of the table. The guests finally see who they were really invited to meet.
+
+Everybunny came for dinner. Not everybunny leaves.
 
 **Bunny appétit.**
 
-* **Deck type:** Selesnya tokens, +1/+1 counters, lifegain, and creature combo
-* **Good against:** Aggressive and damage-based decks, fair creature strategies, and decks relying on spot removal to control the board
-* **Struggles against:** Repeated exile or bounce sweepers, effects that prevent lifegain or counters, pillow-fort strategies, and faster noncombat combo decks
+## The Deck
+
+![Deck mosaic](deck_mosaic_preview.jpg)
 
 ## Deck Resources
 
@@ -30,5 +46,3 @@ Finneas finally draws his bow, but [Silence](https://scryfall.com/search?q=%21%2
 * [Power analysis](power_analysis.md)
 * [Full deck mosaic](deck_mosaic.png)
 * [Back to all decks](../../../README.md)
-
-![Deck mosaic](deck_mosaic_preview.jpg)

@@ -14,8 +14,10 @@ the same folder):
   between ``]`` and ``(``) are reported as errors.
 * Relative links (decklists, analysis files, mosaic images, "back to all
   decks", etc.) must resolve to a file that actually exists.
-* ``scryfall.com`` links must be shaped like ``/card/<set>/<number>[/slug]``
-  or ``/search?q=...``; anything else is a malformed-link error.
+* ``scryfall.com`` links must be shaped like ``/card/<set>/<number>[/slug]``;
+  ``/search?q=...`` links are a hard error, since they don't pin down a
+  specific printing and can show the wrong art for the card the story means.
+  Link directly to the card's own page instead.
 * For ``/card/<set>/<number>`` links: if that exact printing (set + collector
   number) is used by a *different* card in the decklist, that's a hard
   error — it means the story text and the decklist disagree about what that
@@ -34,13 +36,27 @@ the same folder):
   99 — fix the README (link the real card) or fix the decklist (the card
   belongs in the deck) rather than treating it as a harmless namedrop. This
   check also accepts the character-name shorthand described above (e.g. a
-  ``/search`` link's text can be "Teferi" for "Teferi, Time Raveler"), with
-  the same ambiguity error when more than one deck card shares that name.
+  link's text can be "Teferi" for "Teferi, Time Raveler"), with the same
+  ambiguity error when more than one deck card shares that name.
 * Every deck's featured "thematic borderless" cards — the ones pinned to the
   front of its generated mosaic via ``[mosaic_order]`` in ``deckcheck.toml``
   — must be **bolded** wherever the README links to them (e.g.
   ``**[Wedding Ring](...)**``). A matching link that isn't wrapped in ``**``
   is a hard error.
+* The README's overall layout must match the shared house style:
+  - A ``# <Commander>`` title with just the commander's plain name (no
+    flavor subtitle).
+  - Immediately after, a metadata table with exactly these rows, in this
+    order: **Commander**, **Colors**, **Archetype**, **Good against**,
+    **Struggles against**.
+  - A ``## <Deck Name>`` narrative section header whose text matches the
+    deck's flavor name — the part of the deck's folder name after the
+    " – " separator (e.g. "Somebunny Said I Do" for
+    "Ms. Bumbleflower – Somebunny Said I Do").
+  - A ``## The Deck`` section containing the mosaic preview image, which
+    must come before a final ``## Deck Resources`` section. The mosaic
+    preview image must not appear anywhere else in the file.
+  Any deviation from this layout is a hard error.
 
 Also reported, as a non-fatal ``INFO`` diagnostic, is the reverse gap: cards
 that are in the decklist but never get a mention in the README at all (basic
@@ -98,6 +114,16 @@ DCK_SECTIONS = {"commander", "main", "sideboard", "attractions"}
 
 SCRYFALL_SET_RE = re.compile(r"^[a-z0-9]+$")
 
+# Some printings (Secret Lair / Universes Beyond crossover treatments, mostly)
+# carry an alternate "flavor name" printed on the card itself, distinct from
+# the card's real (Oracle) name stored in the decklist. The README should use
+# whichever name is actually printed on the physical card, so a link pinned to
+# one of these exact (set, collector number) printings may use the flavor name
+# in place of the deck name.
+FLAVOR_NAMES: dict[tuple[str, str], str] = {
+    ("sld", "2205"): "Cordyceps Rat King",  # Mycoloth's The Last of Us treatment
+}
+
 _QUOTE_MAP = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201c": '"', "\u201d": '"'})
 
 
@@ -133,6 +159,26 @@ def is_character_name_match(link_text: str, deck_name: str) -> bool:
     return normalize_name(link_text) == normalize_name(character_name(deck_name))
 
 
+def is_flavor_name_match(link_text: str, set_code: str, collector: str) -> bool:
+    """True if link_text is the alternate flavor name printed on this exact
+    (set, collector number) printing, e.g. "Cordyceps Rat King" for Mycoloth's
+    sld/2205 treatment. See FLAVOR_NAMES.
+    """
+    flavor = FLAVOR_NAMES.get((set_code.lower(), collector.lower()))
+    return flavor is not None and normalize_name(link_text) == normalize_name(flavor)
+
+
+def scryfall_card_printing(url: str) -> tuple[str, str] | None:
+    """(set code, collector number) parsed from a scryfall.com /card/<set>/<num> URL, or None."""
+    parsed = urllib.parse.urlparse(url)
+    if parsed.netloc != "scryfall.com":
+        return None
+    path_parts = [p for p in parsed.path.split("/") if p]
+    if len(path_parts) < 3 or path_parts[0] != "card":
+        return None
+    return (urllib.parse.unquote(path_parts[1]).lower(), urllib.parse.unquote(path_parts[2]).lower())
+
+
 @dataclass(frozen=True)
 class Issue:
     level: str  # "ERROR" or "WARNING"
@@ -147,12 +193,15 @@ class DeckCards:
     by_printing: dict
     # normalized character name (before the comma) -> raw names of every card sharing it
     character_names: dict
+    # raw name(s) of the card(s) in the decklist's [Commander] section, in declared order
+    commander_names: list
 
 
 def parse_decklist(path: Path) -> DeckCards:
     by_name: dict = {}
     by_printing: dict = {}
     character_names: dict = {}
+    commander_names: list = []
     section = None
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         header = DCK_SECTION.match(raw_line)
@@ -176,7 +225,10 @@ def parse_decklist(path: Path) -> DeckCards:
             character_names.setdefault(normalize_name(character_name(name)), []).append(name)
         if set_code and collector:
             by_printing[(set_code.lower(), collector.lower())] = entry
-    return DeckCards(by_name=by_name, by_printing=by_printing, character_names=character_names)
+        if section == "commander":
+            commander_names.append(name)
+    return DeckCards(by_name=by_name, by_printing=by_printing, character_names=character_names,
+                      commander_names=commander_names)
 
 
 def require_in_deck(link_text: str, cards: DeckCards, issues: list[Issue]) -> None:
@@ -221,7 +273,9 @@ def check_scryfall_link(link_text: str, url: str, parsed: urllib.parse.ParseResu
         entry = cards.by_printing.get((set_code, number))
         if entry is not None:
             deck_name, deck_set, deck_number = entry
-            if normalize_name(link_text) == normalize_name(deck_name) or is_shortened_name_match(link_text, deck_name):
+            if (normalize_name(link_text) == normalize_name(deck_name)
+                    or is_shortened_name_match(link_text, deck_name)
+                    or is_flavor_name_match(link_text, set_code, number)):
                 matched_by_printing = True
             elif is_character_name_match(link_text, deck_name):
                 sharers = cards.character_names.get(normalize_name(character_name(deck_name)), [])
@@ -243,10 +297,12 @@ def check_scryfall_link(link_text: str, url: str, parsed: urllib.parse.ParseResu
                     "what that Scryfall page is — one of the two names is wrong.",
                 ))
     elif path_parts[0] == "search":
-        query = urllib.parse.parse_qs(parsed.query)
-        q_values = query.get("q")
-        if not q_values or not q_values[0].strip():
-            issues.append(Issue("ERROR", f"Malformed scryfall search link (missing/empty q= param): {url}"))
+        issues.append(Issue(
+            "ERROR",
+            f"Scryfall search link not allowed: {url}. Link directly to the card's "
+            "own page (/card/<set>/<number>) so the art shown matches the printing "
+            "the story means.",
+        ))
     else:
         issues.append(Issue("ERROR", f"Unrecognized scryfall.com link shape (expected /card/ or /search): {url}"))
 
@@ -300,7 +356,8 @@ def load_mosaic_order() -> dict[Path, list[str]]:
     return result
 
 
-def check_featured_cards_are_bold(text: str, featured_names: list[str]) -> list[Issue]:
+def check_featured_cards_are_bold(text: str, featured_names: list[str],
+                                   cards: DeckCards | None = None) -> list[Issue]:
     """Every README link to one of the deck's featured mosaic_order cards must be
     wrapped in ``**bold**`` (e.g. ``**[Wedding Ring](...)**``) so these thematic
     borderless treatments stand out from the rest of the story text.
@@ -309,9 +366,17 @@ def check_featured_cards_are_bold(text: str, featured_names: list[str]) -> list[
     for match in LINK_RE.finditer(text):
         link_text = match.group(1)
         for name in featured_names:
-            if not (normalize_name(link_text) == normalize_name(name)
-                    or is_shortened_name_match(link_text, name)
-                    or is_character_name_match(link_text, name)):
+            is_match = (normalize_name(link_text) == normalize_name(name)
+                        or is_shortened_name_match(link_text, name)
+                        or is_character_name_match(link_text, name))
+            if not is_match and cards is not None:
+                printing = scryfall_card_printing(match.group(2))
+                if printing is not None:
+                    entry = cards.by_printing.get(printing)
+                    if (entry is not None and normalize_name(entry[0]) == normalize_name(name)
+                            and is_flavor_name_match(link_text, *printing)):
+                        is_match = True
+            if not is_match:
                 continue
             before = text[max(0, match.start() - 2):match.start()]
             after = text[match.end():match.end() + 2]
@@ -323,6 +388,125 @@ def check_featured_cards_are_bold(text: str, featured_names: list[str]) -> list[
                     f"**[{link_text}]({match.group(2)})**.",
                 ))
             break
+    return issues
+
+
+# Required metadata-table rows, in order, right after the "# <Commander>" title.
+LAYOUT_TABLE_LABELS = ["Commander", "Colors", "Archetype", "Good against", "Struggles against"]
+
+HEADING_RE = re.compile(r"^(#{1,6})[ \t]+(.+?)[ \t]*$", re.MULTILINE)
+TABLE_HEADER_SEP_RE = re.compile(r"^\|\s*\|\s*\|\s*$\n^\|[-\s]+\|[-\s]+\|\s*$", re.MULTILINE)
+TABLE_ROW_LABEL_RE = re.compile(r"^\|\s*\*\*(.+?)\*\*\s*\|", re.MULTILINE)
+IMAGE_RE = re.compile(r"!\[[^\]]*\]\([^)]+\)")
+
+
+def deck_flavor_name(deck_dir: Path) -> str | None:
+    """The deck's flavor title: the part of its folder name after the
+    " – " separating it from the commander's name (e.g. "Somebunny Said I Do"
+    from "Ms. Bumbleflower – Somebunny Said I Do"). ``None`` if the folder
+    name doesn't follow that convention.
+    """
+    parts = deck_dir.name.split(" \u2013 ", 1)
+    return parts[1].strip() if len(parts) == 2 else None
+
+
+def check_readme_layout(text: str, deck_dir: Path, cards: DeckCards) -> list[Issue]:
+    """Enforce the shared house layout: a plain "# <Commander>" title, a
+    metadata table, a "## <Deck Name>" narrative header, and a "## The Deck"
+    section (holding the mosaic preview image) before a final
+    "## Deck Resources" section. See the module docstring for the full shape.
+    """
+    issues: list[Issue] = []
+    headings = [(len(m.group(1)), m.group(2).strip(), m.start()) for m in HEADING_RE.finditer(text)]
+    if not headings:
+        issues.append(Issue("ERROR", "README has no headings at all; expected a '# <Commander>' title."))
+        return issues
+
+    title_level, title_text, title_pos = headings[0]
+    commander_name = cards.commander_names[0] if cards.commander_names else None
+    if title_level != 1:
+        issues.append(Issue(
+            "ERROR",
+            f"README must start with a level-1 '# <Commander>' title; found '{'#' * title_level} {title_text}'.",
+        ))
+    elif commander_name and title_text != commander_name:
+        issues.append(Issue(
+            "ERROR",
+            f"README title '# {title_text}' should be just the commander's plain name: '# {commander_name}'.",
+        ))
+
+    next_pos = headings[1][2] if len(headings) > 1 else len(text)
+    table_block = text[title_pos:next_pos]
+    if not TABLE_HEADER_SEP_RE.search(table_block):
+        issues.append(Issue(
+            "ERROR",
+            "Missing metadata table (`| | |` header row + `|---|---|` separator) right after the title.",
+        ))
+    row_labels = TABLE_ROW_LABEL_RE.findall(table_block)
+    if row_labels != LAYOUT_TABLE_LABELS:
+        missing = [label for label in LAYOUT_TABLE_LABELS if label not in row_labels]
+        if missing:
+            issues.append(Issue(
+                "ERROR",
+                f"Metadata table is missing row(s): {', '.join(missing)}. "
+                f"Expected rows in order: {', '.join(LAYOUT_TABLE_LABELS)}.",
+            ))
+        else:
+            issues.append(Issue(
+                "ERROR",
+                f"Metadata table rows are out of order. Expected: {', '.join(LAYOUT_TABLE_LABELS)}; "
+                f"found: {', '.join(row_labels)}.",
+            ))
+
+    if len(headings) < 2:
+        issues.append(Issue(
+            "ERROR", "README is missing a '## <Deck Name>' narrative header after the metadata table."
+        ))
+    else:
+        narrative_level, narrative_text, _narrative_pos = headings[1]
+        if narrative_level != 2:
+            issues.append(Issue(
+                "ERROR",
+                "Expected a level-2 narrative header right after the metadata table; found "
+                f"'{'#' * narrative_level} {narrative_text}'.",
+            ))
+        flavor_name = deck_flavor_name(deck_dir)
+        if flavor_name and narrative_text != flavor_name:
+            issues.append(Issue(
+                "ERROR",
+                f"Narrative header '## {narrative_text}' should match the deck's name: '## {flavor_name}'.",
+            ))
+
+    the_deck = next(((i, h) for i, h in enumerate(headings) if h[0] == 2 and h[1] == "The Deck"), None)
+    deck_resources = next(
+        ((i, h) for i, h in enumerate(headings) if h[0] == 2 and h[1] == "Deck Resources"), None
+    )
+    if the_deck is None:
+        issues.append(Issue("ERROR", "Missing '## The Deck' section with the mosaic preview image."))
+    if deck_resources is None:
+        issues.append(Issue("ERROR", "Missing '## Deck Resources' section."))
+    if the_deck is not None and deck_resources is not None and the_deck[1][2] > deck_resources[1][2]:
+        issues.append(Issue("ERROR", "'## The Deck' must come before '## Deck Resources'."))
+
+    the_deck_span = None
+    if the_deck is not None:
+        idx, (_level, _title, pos) = the_deck
+        end = headings[idx + 1][2] if idx + 1 < len(headings) else len(text)
+        the_deck_span = (pos, end)
+        if not IMAGE_RE.search(text[pos:end]):
+            issues.append(Issue(
+                "ERROR",
+                "'## The Deck' section must contain the mosaic preview image "
+                "(e.g. ![Deck mosaic](deck_mosaic_preview.jpg)).",
+            ))
+
+    for image in IMAGE_RE.finditer(text):
+        if the_deck_span is None or not (the_deck_span[0] <= image.start() < the_deck_span[1]):
+            issues.append(Issue(
+                "ERROR",
+                f"Mosaic image {image.group(0)} found outside the '## The Deck' section; move it there.",
+            ))
+
     return issues
 
 
@@ -351,7 +535,9 @@ def check_readme(readme_path: Path, deck_dir: Path, cards: DeckCards,
         issues.extend(check_link(match.group(1), match.group(2), deck_dir, cards))
 
     if featured_names:
-        issues.extend(check_featured_cards_are_bold(text, featured_names))
+        issues.extend(check_featured_cards_are_bold(text, featured_names, cards))
+
+    issues.extend(check_readme_layout(text, deck_dir, cards))
 
     return issues
 
@@ -377,14 +563,20 @@ def find_uncovered_cards(readme_text: str, cards: DeckCards,
     most deck-unique cards (fewest other decks) first.
     """
     global_card_counts = global_card_counts or {}
-    covered_texts = [match.group(1) for match in LINK_RE.finditer(readme_text)]
+    covered_links = [(match.group(1), match.group(2)) for match in LINK_RE.finditer(readme_text)]
+    covered_texts = [text for text, _url in covered_links]
     covered = {normalize_name(text) for text in covered_texts}
     uncovered = []
-    for normalized, (raw_name, _set, _number) in cards.by_name.items():
+    for normalized, (raw_name, set_code, number) in cards.by_name.items():
         if normalized in BASIC_LAND_NAMES or normalized in covered:
             continue
         if any(is_shortened_name_match(text, raw_name) or is_character_name_match(text, raw_name)
                for text in covered_texts):
+            continue
+        if set_code and number and any(
+                scryfall_card_printing(url) == (set_code.lower(), number.lower())
+                and is_flavor_name_match(text, set_code, number)
+                for text, url in covered_links):
             continue
         uncovered.append((raw_name, global_card_counts.get(normalized, 1) - 1))
     uncovered.sort(key=lambda item: (item[1], item[0].lower()))
