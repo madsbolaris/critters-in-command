@@ -15,6 +15,30 @@ their own prompt): they don't require any other phase to have run first, and
 need no additional input beyond the README text itself — extra context (a
 specific line, a deck slug) only narrows focus, it's never required.
 
+### Working a single flagged sentence to convergence
+
+A single awkward sentence can take many rounds of user feedback to fix.
+Handle that loop deliberately instead of guessing forever:
+
+- **Two failed micro-edits (swapping a word/preposition) on the same spot
+  is the signal to stop patching and rewrite the clause/sentence from
+  scratch with a different shape.** Vague negative feedback like "still
+  awful", "sounds clunky", or "still reads weird" after you've already
+  tried a word-level fix means the problem is structural (who's the
+  subject, what order are the clauses in), not lexical — another synonym
+  swap won't fix it.
+- If the user names a specific narrative **beat** they want kept (e.g. "the
+  invitation", "the turn from good to bad"), treat the *beat* as the
+  invariant, not its exact wording or which clause/sentence hosts it. It can
+  relocate across rewrites as long as the underlying idea survives.
+- If the user states explicit causality ("X answering causes Y", "X because
+  of Y"), the clause order in the rewritten sentence must mirror that
+  causality (cause-clause before effect-clause) — don't just coordinate
+  both ideas with "and" and assume order is irrelevant.
+- If the user hands you an exact rewrite ("try: ..."), apply it close to
+  verbatim first — fix only what's needed for validity (links, casing,
+  punctuation). Don't creatively embellish on top of a literal dictation.
+
 ## 1. Mechanic audit
 
 Re-read every sentence and ask: **does this sentence's logic depend on
@@ -81,6 +105,11 @@ phrase level: cut filler flourishes/qualifiers that only restate or
 intensify a point already made (e.g. "burrow to burrow", "delight too warm
 to be an act") rather than adding new information — if the plain word
 already conveys the idea, the extra phrase is a redundant beat in miniature.
+This also covers a repeated *joke/premise* told via two different cards in
+nearby sentences (e.g. two separate clauses both landing "nobody remembers
+who was invited") — even with completely different wording, it's the same
+punchline twice. Keep it in the strongest single spot and let the other
+sentence do different narrative work.
 
 ## 5. Placement matches the card's own theme
 
@@ -109,6 +138,14 @@ prompt) or a deliberate revisit of card-mapping, never in isolation.
   action, not an actor). Give it a real agent as the subject ("the staff
   are always Stocking the Pantry...") or make the card name the object of a
   preposition — never let it double as an unnamed doer.
+- The same failure applies to any card name that reads as an abstract
+  description rather than a concrete noun (e.g. "Finale of Devastation" —
+  literally "a final act of devastation"). Sentences like "the Finale of
+  Devastation sends out one final invitation" or "...reaches out for one
+  final guest" read as broken English, because an abstract description
+  can't perform a verb. Give a real actor (a character, another card) the
+  action, and use the abstract-phrase name as a descriptive/prepositional
+  tag instead ("...and in a Finale of Devastation, nothing survives").
 - Default to active voice when fixing a sentence like this. Rewriting a
   passive construction ("the larder is kept full by Stocking the Pantry")
   removes the grammar error but trades it for passive voice, which is its
@@ -122,6 +159,18 @@ prompt) or a deliberate revisit of card-mapping, never in isolation.
   "warren"). This is distinct from lens #4 (redundant *beats*) — this is a
   literal word-level repetition, fixed by swapping the second occurrence
   for a synonym (e.g. "marshals the burrow").
+- The same word-echo check also catches a verb applied twice to two
+  different subjects in one sentence (e.g. "Farmer Cotton rolls in ... and
+  a Springleaf Parade rolls in right behind them") — even though nothing
+  is grammatically wrong, it reads like a copy-paste artifact. Vary the
+  second verb ("follows right behind them").
+- A connector/transition word must match the real logical relationship,
+  not just sound literary. "Until" implies a stopping point/limit and is
+  wrong when the described action keeps going past it; "where" suits a
+  spatial handoff into a reaction; "so"/causal phrasing suits a direct
+  consequence. If the user rejects a connector without saying why, ask
+  which relationship (spatial/causal/temporal-limit) it should express
+  rather than guessing another synonym.
 
 ## 7. Agency and causality attribution
 

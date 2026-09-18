@@ -41,7 +41,21 @@ When asked to strategize:
    flavor — never mention what it does mechanically, even in this planning
    text (see the hard "no mechanics" rule from the recon phase).
 4. Bias card selection for "filling out" the story toward unique cards
-   (low other-deck count) over generic staples.
+   (low other-deck count) over generic staples. **Don't rely on memory or
+   "this feels niche" instinct — verify with real numbers before writing
+   any candidate into prose:**
+   ```
+   python3 -c "
+   import sys; sys.path.insert(0, 'scripts'); import check_readmes as cr
+   counts = cr.build_global_card_counts(cr.discover_decks())
+   print(counts.get(cr.normalize_name('Card Name'), 0) - 1)
+   "
+   ```
+   This applies to every new card you add — including ones filling a hole
+   left by a Class B removal and any "for color/completeness" additions
+   that aren't fixing a flagged problem at all (don't add those unless
+   they're actually deck-unique; a clean `check_readmes.py` run proves
+   nothing about uniqueness, it only proves the absence of hard errors).
 5. Make the call on every structural question yourself (trim vs. merge vs.
    rebuild, which new card anchors a rebuilt beat) and go straight into
    drafting the full rewrite — do not stop and present a list of options
@@ -55,6 +69,28 @@ When asked to strategize:
 "The" vs no "The", a nickname used as link text instead of the real name).
 This is a pure correction: the card is still there, just point the link at
 it correctly or move a nickname outside the brackets. No narrative impact.
+
+**A printing collision needs a diagnosis step before any fix.** When the
+checker reports `Printing collision: [X] points to set/number, but the
+decklist has 'Y' at that exact printing`, do not assume which side is wrong.
+There are two distinct causes:
+1. X is a mistaken/invented name and Y is correct — rewrite the whole beat
+   around Y's real identity (name, art, printed flavor text), the same
+   effort as a Class B replacement. Do not just swap the label into the
+   old sentence and leave everything else built around the wrong image.
+2. **X is the card's own, officially printed alternate name** — check
+   `https://api.scryfall.com/cards/<set>/<number>`'s `flavor_name` field
+   before concluding anything. Secret Lair and Universes Beyond crossover
+   treatments frequently print a different name on the card itself (see
+   `FLAVOR_NAMES` in `scripts/check_readmes.py`). If `flavor_name` matches
+   X, the prose was already correct — add the `(set, number)` printing to
+   `FLAVOR_NAMES` instead of touching a single word of the README.
+Always check the Scryfall API before editing anything — guessing wrong
+here means "fixing" prose that was never broken. (This happened twice in
+one session with `The Party Tree` / `ltc/348`: it turned out to be case 2 —
+`The Party Tree` is The Great Henge's actual printed flavor name on that
+Lord of the Rings Commander printing — but it was first mis-diagnosed as
+case 1 and the correct prose was rewritten unnecessarily.)
 
 **Class B — the named card is no longer in the decklist at all** (the
 decklist changed since the README was written). **This is never a

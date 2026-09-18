@@ -80,6 +80,17 @@ class IsShortenedNameMatchTests(unittest.TestCase):
         self.assertTrue(check_readmes.is_shortened_name_match("Teferi's Tutelage", "Teferi's Tutelage"))
 
 
+class IsPluralMatchTests(unittest.TestCase):
+    def test_regular_plural_matches(self):
+        self.assertTrue(check_readmes.is_plural_match("Delighted Halflings", "Delighted Halfling"))
+
+    def test_singular_is_not_a_plural_match(self):
+        self.assertFalse(check_readmes.is_plural_match("Delighted Halfling", "Delighted Halfling"))
+
+    def test_unrelated_word_does_not_match(self):
+        self.assertFalse(check_readmes.is_plural_match("Sphinxes", "Delighted Halfling"))
+
+
 class CharacterNameTests(unittest.TestCase):
     def test_splits_off_comma_epithet(self):
         self.assertEqual(check_readmes.character_name("Teferi, Time Raveler"), "Teferi")
@@ -111,6 +122,9 @@ class IsFlavorNameMatchTests(unittest.TestCase):
 
     def test_oracle_name_is_not_a_flavor_name_match(self):
         self.assertFalse(check_readmes.is_flavor_name_match("Mycoloth", "sld", "2205"))
+
+    def test_great_henge_party_tree_flavor_name_matches(self):
+        self.assertTrue(check_readmes.is_flavor_name_match("The Party Tree", "ltc", "348"))
 
 
 class ScryfallCardPrintingTests(unittest.TestCase):
@@ -410,7 +424,7 @@ class CheckScryfallLinkTests(unittest.TestCase):
         self.assertEqual(issues, [])
 
     def test_printing_collision_is_an_error(self):
-        issues = self._check("The Party Tree", "https://scryfall.com/card/ltc/348")
+        issues = self._check("Sol Ring", "https://scryfall.com/card/blb/6")
         errors = [i for i in issues if i.level == "ERROR"]
         self.assertTrue(any("Printing collision" in i.message for i in errors))
 

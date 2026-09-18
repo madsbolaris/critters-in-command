@@ -43,7 +43,12 @@ if present.
   (but/although/until/soon), that turns the story from positive to negative.
 - A back half that follows real cause-and-effect (pain → escalation →
   suppression → consequence), not just a list of bad things in random order.
-- A punchy closing tagline.
+- A two-part closing: a plain (non-bold) "Everybunny X. Everybunny Y."
+  sentence, immediately followed by a bold, one-line pun tied to that
+  deck's specific theme (e.g. wedding: "Till deck do us part."; dinner:
+  "Bunny appétit."; combat/overrun: "RSVP: regretfully, everyone."). Both
+  parts are required — a lone bold "everybunny" line without the trailing
+  pun is the old/incomplete form of this convention, not the target state.
 
 ## Next phase
 

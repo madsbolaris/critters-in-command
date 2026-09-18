@@ -2,9 +2,12 @@
 """
 Validate every deck ``README.md`` against its authoritative ``decklist.dck``.
 
-This is a static, offline linter. It does not call the Scryfall API — every
-check is derived purely from the two files sitting next to each other in the
-repository, so it runs instantly and never flakes on network access.
+This is primarily a static, offline linter: it does not call the Scryfall
+API, and every check besides one is derived purely from the two files
+sitting next to each other in the repository, so it runs instantly and
+never flakes on network access. The one exception is the foil-italics rule
+below, which needs DeckCheck's live per-card finish data; use ``--offline``
+to skip it (and every other check keeps working normally without network).
 
 Checks performed for each ``README.md`` (paired with the ``decklist.dck`` in
 the same folder):
@@ -49,6 +52,17 @@ the same folder):
   to the plain ``# <Commander>`` title or the metadata table's Commander
   row, only to mentions within the story prose itself. A matching link
   there that isn't wrapped in ``**`` is a hard error.
+* Every other README link to a card that DeckCheck's live API reports as
+  foil (``isFoil``), whose printing isn't borderless, must be wrapped in
+  *italics* (a single ``*...*``) — e.g. ``*[Grand Crescendo](...)*``. The
+  commander(s) and the featured ``mosaic_order`` cards above are exempt
+  (they use bold instead). A matching foil/non-borderless card missing
+  italics, or a plain nonfoil/borderless card wrongly italicized, is a hard
+  error. Unlike every other check in this file, this one needs a live
+  network call to DeckCheck (plus the local Scryfall bulk cache for border
+  colors); if that fetch isn't available for a deck (offline, deck no
+  longer public, cache missing, ...) this check is silently skipped for
+  that deck rather than guessing, and a note is printed to stderr.
 * The README's overall layout must match the shared house style:
   - A ``# <Commander>`` title with just the commander's plain name (no
     flavor subtitle).
@@ -75,16 +89,16 @@ Every run also writes a per-deck ``readme_check_report.md`` (gitignored) next
 to each README with the same information, so it can be referenced while
 editing without re-running the script. In that report, the uncovered-card list
 is also grouped by card type (Creature, Sorcery, Instant, Artifact,
-Enchantment, Land) using the local Scryfall bulk-data cache already maintained
-by ``scripts/shopping_list.py`` (``scripts/.cache/scryfall_default_cards.json``).
-If that cache hasn't been populated yet, the list falls back to ungrouped —
-run ``scripts/shopping_list.py`` once to populate it (still no network call
-from this script itself).
+Enchantment, Land) using a local Scryfall bulk-data cache
+(``scripts/.cache/scryfall_default_cards.json``), if one happens to be
+present. If that cache hasn't been populated, the list falls back to
+ungrouped (still no network call from this script itself).
 
 Usage:
     python scripts/check_readmes.py                  # every deck
     python scripts/check_readmes.py baylen bumbleflower  # by folder-name substring
     python scripts/check_readmes.py --strict          # warnings also fail the run
+    python scripts/check_readmes.py --offline         # skip the live foil-italics check
 """
 
 from __future__ import annotations
@@ -105,6 +119,13 @@ CACHE_DIR = REPO_DIR / "scripts" / ".cache"
 BULK_FILE = CACHE_DIR / "scryfall_default_cards.json"
 TYPE_INDEX_FILE = CACHE_DIR / "card_type_index.json"
 DECKCHECK_CONFIG = REPO_DIR / "deckcheck.toml"
+
+# scripts/ isn't necessarily on sys.path (e.g. tests load this file directly
+# via importlib), so make sure the sibling sync_deckcheck module resolves.
+_SCRIPTS_DIR = str(Path(__file__).parent)
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+import sync_deckcheck  # noqa: E402 (needs the sys.path shim above)
 
 ALLOWED_EXTERNAL_DOMAINS = {"scryfall.com", "deckcheck.co"}
 
@@ -128,6 +149,7 @@ SCRYFALL_SET_RE = re.compile(r"^[a-z0-9]+$")
 # in place of the deck name.
 FLAVOR_NAMES: dict[tuple[str, str], str] = {
     ("sld", "2205"): "Cordyceps Rat King",  # Mycoloth's The Last of Us treatment
+    ("ltc", "348"): "The Party Tree",       # The Great Henge's LotR Commander treatment
 }
 
 _QUOTE_MAP = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201c": '"', "\u201d": '"'})
@@ -163,6 +185,17 @@ def is_character_name_match(link_text: str, deck_name: str) -> bool:
     if "," not in deck_name:
         return False
     return normalize_name(link_text) == normalize_name(character_name(deck_name))
+
+
+def is_plural_match(link_text: str, deck_name: str) -> bool:
+    """Allow link text that's the plain-English plural of the real card name,
+    e.g. "Delighted Halflings" for "Delighted Halfling" (a wheelbarrow full of
+    them). Only the regular +s / +es plural is recognized; irregular plurals
+    still need the literal singular card name as link text.
+    """
+    normalized_link = normalize_name(link_text)
+    normalized_deck = normalize_name(deck_name)
+    return normalized_link in (normalized_deck + "s", normalized_deck + "es")
 
 
 def is_flavor_name_match(link_text: str, set_code: str, collector: str) -> bool:
@@ -281,6 +314,7 @@ def check_scryfall_link(link_text: str, url: str, parsed: urllib.parse.ParseResu
             deck_name, deck_set, deck_number = entry
             if (normalize_name(link_text) == normalize_name(deck_name)
                     or is_shortened_name_match(link_text, deck_name)
+                    or is_plural_match(link_text, deck_name)
                     or is_flavor_name_match(link_text, set_code, number)):
                 matched_by_printing = True
             elif is_character_name_match(link_text, deck_name):
@@ -299,8 +333,13 @@ def check_scryfall_link(link_text: str, url: str, parsed: urllib.parse.ParseResu
                     "ERROR",
                     f"Printing collision: [{link_text}]({url}) points to {set_code}/{number}, "
                     f"but the decklist has '{deck_name}' at that exact printing "
-                    f"({deck_set} {deck_number}). The story text and decklist disagree about "
-                    "what that Scryfall page is — one of the two names is wrong.",
+                    f"({deck_set} {deck_number}). Before editing anything, fetch "
+                    f"https://api.scryfall.com/cards/{set_code}/{number} and check its "
+                    f"'flavor_name' field: if it equals '{link_text}', the README was already "
+                    "correct and this printing just needs to be added to FLAVOR_NAMES above. "
+                    f"Only if 'flavor_name' does NOT match should you treat '{link_text}' as a "
+                    f"mistaken name and rewrite the beat around '{deck_name}''s real identity "
+                    "(name, art, printed flavor text) — never a same-slot word swap.",
                 ))
     elif path_parts[0] == "search":
         issues.append(Issue(
@@ -470,6 +509,156 @@ def deck_flavor_name(deck_dir: Path) -> str | None:
     return parts[1].strip() if len(parts) == 2 else None
 
 
+def load_foil_cards(deck_dirs: list[Path]) -> tuple[dict[Path, dict[str, tuple]], list[str]]:
+    """Deck directory -> ``{normalized card name: (raw name, set code,
+    collector number, border_color)}`` for every card DeckCheck's live API
+    reports as foil (``entry["isFoil"]``), across both the commander and
+    mainboard boards.
+
+    This is the one live-network exception to this script otherwise being a
+    static offline linter (see module docstring): only DeckCheck knows which
+    specific printing/finish is actually in the deck, the decklist and
+    README don't record it. Failures (missing config, deck no longer public,
+    unreachable API, ...) are swallowed into the returned warning list
+    instead of crashing the run — the italics check is simply skipped for
+    that deck, same as when the Scryfall bulk cache is missing.
+
+    ``border_color`` is looked up from the local Scryfall bulk-data cache and
+    is ``None`` if that cache isn't populated or doesn't have that printing;
+    callers should treat "unknown border" as "can't verify, don't flag".
+    """
+    warnings: list[str] = []
+    result: dict[Path, dict[str, tuple]] = {}
+    if not DECKCHECK_CONFIG.exists():
+        return result, warnings
+    try:
+        sources = sync_deckcheck.load_sources(DECKCHECK_CONFIG)
+    except sync_deckcheck.SyncError as error:
+        warnings.append(f"Could not load {DECKCHECK_CONFIG.name} for live foil status: {error}")
+        return result, warnings
+
+    border_index: dict[tuple[str, str], str] | None = None
+    if BULK_FILE.exists():
+        with BULK_FILE.open(encoding="utf-8") as f:
+            bulk_cards = json.load(f)
+        border_index = {
+            (card["set"].lower(), card["collector_number"].lower()): card["border_color"]
+            for card in bulk_cards
+            if card.get("set") and card.get("collector_number") and card.get("border_color")
+        }
+
+    by_dir = {(DECKS_DIR / source.directory).resolve(): source for source in sources}
+    for deck_dir in deck_dirs:
+        source = by_dir.get(deck_dir.resolve())
+        if source is None:
+            continue
+        try:
+            deck = sync_deckcheck.fetch_deck(source)
+        except sync_deckcheck.SyncError as error:
+            warnings.append(f"{source.slug}: could not fetch live foil status from DeckCheck: {error}")
+            continue
+        foil_cards: dict[str, tuple] = {}
+        for board_name in ("commanders", "mainboard"):
+            for entry in sync_deckcheck.board_entries(deck, board_name):
+                if not entry.get("isFoil"):
+                    continue
+                card = entry.get("card", {})
+                name = card.get("name")
+                if not name:
+                    continue
+                set_code = card.get("setCode", "")
+                collector = card.get("collectorNumber", "")
+                border_color = None
+                if border_index is not None and set_code and collector:
+                    border_color = border_index.get((set_code.lower(), collector.lower()))
+                foil_cards[normalize_name(name)] = (name, set_code, collector, border_color)
+        result[deck_dir] = foil_cards
+    return result, warnings
+
+
+def check_foil_cards_are_italicized(text: str, foil_cards: dict[str, tuple] | None,
+                                     cards: DeckCards, featured_names: list[str] | None) -> list[Issue]:
+    """Every README link to a card DeckCheck's live API reports as foil, whose
+    printing isn't borderless, must be wrapped in *italics* (a single pair of
+    asterisks, e.g. ``*[Grand Crescendo](...)*``) — except the commander(s)
+    and the deck's bold-only featured ``mosaic_order`` cards, which use bold
+    instead. A matching foil/non-borderless card missing italics, or a plain
+    nonfoil/borderless card that's wrongly italicized, is a hard error.
+    ``foil_cards`` is ``None`` when the live DeckCheck fetch wasn't available
+    for this deck (see ``load_foil_cards``); the check is skipped entirely in
+    that case rather than guessing.
+    """
+    if foil_cards is None:
+        return []
+    excluded = {normalize_name(name) for name in cards.commander_names}
+    excluded |= {normalize_name(name) for name in (featured_names or [])}
+
+    issues: list[Issue] = []
+    for match in LINK_RE.finditer(text):
+        link_text = match.group(1)
+        matched_name: str | None = None
+
+        printing = scryfall_card_printing(match.group(2))
+        if printing is not None:
+            printing_entry = cards.by_printing.get(printing)
+            if printing_entry is not None and (
+                normalize_name(link_text) == normalize_name(printing_entry[0])
+                or is_shortened_name_match(link_text, printing_entry[0])
+                or is_character_name_match(link_text, printing_entry[0])
+                or is_plural_match(link_text, printing_entry[0])
+                or is_flavor_name_match(link_text, *printing)
+            ):
+                matched_name = normalize_name(printing_entry[0])
+
+        if matched_name is None:
+            name_entry = cards.by_name.get(normalize_name(link_text))
+            if name_entry is not None:
+                matched_name = normalize_name(name_entry[0])
+            else:
+                sharers = cards.character_names.get(normalize_name(link_text))
+                if sharers and len(set(sharers)) == 1:
+                    matched_name = normalize_name(sharers[0])
+
+        if matched_name is None or matched_name in excluded:
+            continue
+
+        before1 = text[max(0, match.start() - 1):match.start()]
+        before2 = text[max(0, match.start() - 2):match.start()]
+        after1 = text[match.end():match.end() + 1]
+        after2 = text[match.end():match.end() + 2]
+        is_bold = before2 == "**" and after2 == "**"
+        is_italic = not is_bold and before1 == "*" and after1 == "*"
+
+        foil_entry = foil_cards.get(matched_name)
+        if foil_entry is not None:
+            raw_name, set_code, collector, border_color = foil_entry
+            if border_color is None:
+                continue  # cache doesn't know this printing's border; don't guess
+            if border_color == "borderless":
+                if is_italic:
+                    issues.append(Issue(
+                        "ERROR",
+                        f"[{link_text}]({match.group(2)}) is foil but its printing "
+                        f"({set_code}/{collector}) is borderless, which already stands out "
+                        f"visually — remove the italics: [{link_text}]({match.group(2)}).",
+                    ))
+                continue
+            if not is_italic:
+                issues.append(Issue(
+                    "ERROR",
+                    f"[{link_text}]({match.group(2)}) refers to '{raw_name}', which DeckCheck "
+                    f"reports as foil ({set_code}/{collector}, border_color={border_color}) — "
+                    f"wrap it in italics: *[{link_text}]({match.group(2)})*.",
+                ))
+        elif is_italic:
+            issues.append(Issue(
+                "ERROR",
+                f"[{link_text}]({match.group(2)}) is italicized but DeckCheck does not report "
+                f"this printing as foil — remove the italics: [{link_text}]({match.group(2)}).",
+            ))
+    return issues
+
+
 def check_readme_layout(text: str, deck_dir: Path, cards: DeckCards) -> list[Issue]:
     """Enforce the shared house layout: a plain "# <Commander>" title, a
     metadata table, a "## <Deck Name>" narrative header, and a "## The Deck"
@@ -571,7 +760,8 @@ def check_readme_layout(text: str, deck_dir: Path, cards: DeckCards) -> list[Iss
 
 
 def check_readme(readme_path: Path, deck_dir: Path, cards: DeckCards,
-                  featured_names: list[str] | None = None) -> list[Issue]:
+                  featured_names: list[str] | None = None,
+                  foil_cards: dict[str, tuple] | None = None) -> list[Issue]:
     issues: list[Issue] = []
     text = readme_path.read_text(encoding="utf-8")
 
@@ -598,6 +788,8 @@ def check_readme(readme_path: Path, deck_dir: Path, cards: DeckCards,
         issues.extend(check_featured_cards_are_bold(text, featured_names, cards))
 
     issues.extend(check_commander_is_bold(text, cards, find_narrative_span(text)))
+
+    issues.extend(check_foil_cards_are_italicized(text, foil_cards, cards, featured_names))
 
     issues.extend(check_readme_layout(text, deck_dir, cards))
 
@@ -633,6 +825,7 @@ def find_uncovered_cards(readme_text: str, cards: DeckCards,
         if normalized in BASIC_LAND_NAMES or normalized in covered:
             continue
         if any(is_shortened_name_match(text, raw_name) or is_character_name_match(text, raw_name)
+               or is_plural_match(text, raw_name)
                for text in covered_texts):
             continue
         if set_code and number and any(
@@ -674,9 +867,9 @@ def _build_type_index() -> dict[str, str]:
 
 
 def load_type_index() -> dict[str, str] | None:
-    """Normalized card name -> Scryfall ``type_line``, read from the local bulk-data
-    cache that ``scripts/shopping_list.py`` maintains. Never calls the network;
-    returns ``None`` if that cache hasn't been populated yet.
+    """Normalized card name -> Scryfall ``type_line``, read from a local bulk-data
+    cache, if one is present. Never calls the network; returns ``None`` if that
+    cache hasn't been populated yet.
 
     The full ~600 MB bulk file is distilled into a small name->type_line
     side-car (``card_type_index.json``) so repeat runs stay fast.
@@ -747,8 +940,8 @@ def render_report(rel: Path, errors: list[Issue], warnings: list[Issue],
 
     grouped = group_uncovered_by_type(uncovered, type_index)
     if grouped is None:
-        lines.append("_Card-type grouping unavailable — run `scripts/shopping_list.py` once to populate the "
-                      "local Scryfall cache, then re-run this checker._")
+        lines.append("_Card-type grouping unavailable — no local Scryfall cache found at "
+                      "`scripts/.cache/scryfall_default_cards.json`._")
         lines.append("")
         for name, count in uncovered:
             label = "deck" if count == 1 else "decks"
@@ -769,6 +962,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("decks", nargs="*", help="Deck folder-name substrings to check (default: all).")
     parser.add_argument("--strict", action="store_true", help="Treat warnings as errors.")
+    parser.add_argument("--offline", action="store_true",
+                         help="Skip the live DeckCheck fetch used to enforce the foil-italics rule.")
     args = parser.parse_args()
 
     deck_dirs = discover_decks()
@@ -783,8 +978,16 @@ def main() -> int:
     type_index = load_type_index()
     if type_index is None:
         print("Note: scripts/.cache/scryfall_default_cards.json not found; the uncovered-card report "
-              "section won't be grouped by type. Run scripts/shopping_list.py once to populate it.",
+              "section won't be grouped by type.",
               file=sys.stderr)
+
+    foil_cards_by_deck: dict[Path, dict[str, tuple]] = {}
+    if args.offline:
+        print("Note: --offline set; skipping the foil-italics check (live DeckCheck fetch).", file=sys.stderr)
+    else:
+        foil_cards_by_deck, foil_warnings = load_foil_cards(deck_dirs)
+        for warning in foil_warnings:
+            print(f"Note: {warning} — foil-italics check skipped for that deck.", file=sys.stderr)
 
     if args.decks:
         wanted = [needle.lower() for needle in args.decks]
@@ -797,7 +1000,8 @@ def main() -> int:
     for deck_dir in deck_dirs:
         cards = parse_decklist(deck_dir / "decklist.dck")
         readme_path = deck_dir / "README.md"
-        issues = check_readme(readme_path, deck_dir, cards, mosaic_order.get(deck_dir))
+        issues = check_readme(readme_path, deck_dir, cards, mosaic_order.get(deck_dir),
+                               foil_cards_by_deck.get(deck_dir))
         uncovered = find_uncovered_cards(readme_path.read_text(encoding="utf-8"), cards, global_card_counts)
 
         errors = [i for i in issues if i.level == "ERROR"]

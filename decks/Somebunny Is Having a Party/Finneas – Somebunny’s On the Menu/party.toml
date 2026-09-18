@@ -1,12 +1,8 @@
 # Host manifest — read by scripts/generate_mosaic.py and the helper scripts.
 name = "The Potluck"
 host = "Finneas, Ace Archer"
-commander = "Finneas, Ace Archer"
-tagline = "Somebunny made too much. Everybunny brought a dish, nobody leaves hungry — they leave enormous."
+tagline = "Somebunny made too much. Everybunny brought a dish, nobody leaves hungry—they leave enormous."
 strategy = "Selesnya (G/W) creature combo that assembles fast—cheap two-card infinites: Heliod + Spike Feeder (infinite life) and Scurry Oak + Rosie Cotton (infinite tokens that end the game). Tutors (Survival of the Fittest, Chord of Calling, Worldly Tutor) find the pieces; typical kill is turn 5, as early as 3. The go-wide tokens/counters/lifegain plan is a backup, and Finneas—a cheap vigilance 2/2 that counters up your tokens each attack by turn 1-2—is great at pumping but not needed to win."
-
-# Extra cards bought as foil beyond the commander and featured trio.
-extra_foils = ["Placid Rottentail"]
 
 [mosaic]
 # A card is "highlighted" (marker + sorts first within its color/type group) when
