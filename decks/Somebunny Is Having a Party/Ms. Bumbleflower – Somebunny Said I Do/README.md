@@ -10,7 +10,7 @@
 
 ## Somebunny Said I Do
 
-[Ms. Bumbleflower](https://scryfall.com/card/blc/103) has found the one. She has only one demand: everybunny *must* be there to **[Savor the Moment](https://scryfall.com/card/sld/1006)** when she says “I do.” Not at just one ceremony, of course—that would never do. She wants memories to last a lifetime, so she books the whole world.
+**[Ms. Bumbleflower](https://scryfall.com/card/blc/103)** has found the one. She has only one demand: everybunny *must* be there to **[Savor the Moment](https://scryfall.com/card/sld/1006)** when she says “I do.” Not at just one ceremony, of course—that would never do. She wants memories to last a lifetime, so she books the whole world.
 
 Everybunny enjoys the ceremonies once they begin, raising a toast to a love as enduring as [Teferi’s Ageless Insight](https://scryfall.com/card/mkc/119). A little [Exploration](https://scryfall.com/card/cns/164) here, an irresistible [Tempt with Discovery](https://scryfall.com/card/blc/124) there, and soon a honeymoon blossoms into genuine [Long-Term Plans](https://scryfall.com/card/scg/38). The [Otherworld Atlas](https://scryfall.com/card/avr/219) never closes, its pages filling with one dream destination after another, and everybunny’s [Fascination](https://scryfall.com/card/frf/34) with what’s next only grows.
 

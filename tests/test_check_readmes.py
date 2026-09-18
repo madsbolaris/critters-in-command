@@ -299,6 +299,53 @@ class CheckFeaturedCardsAreBoldTests(unittest.TestCase):
         self.assertEqual(issues, [])
 
 
+class FindNarrativeSpanTests(unittest.TestCase):
+    def test_finds_span_between_second_and_next_level_two_heading(self):
+        span = check_readmes.find_narrative_span(VALID_LAYOUT_README)
+        self.assertIsNotNone(span)
+        narrative = VALID_LAYOUT_README[span[0]:span[1]]
+        self.assertIn("Caretaker's Talent", narrative)
+        self.assertNotIn("The Deck", narrative)
+
+    def test_returns_none_with_fewer_than_two_headings(self):
+        self.assertIsNone(check_readmes.find_narrative_span("# Only One Heading\n"))
+
+
+class CheckCommanderIsBoldTests(unittest.TestCase):
+    def setUp(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "decklist.dck"
+            write_dck(Path(directory))
+            self.cards = check_readmes.parse_decklist(path)
+
+    def test_bolded_commander_link_has_no_issues(self):
+        text = "**[Test Commander](https://scryfall.com/card/tst/1)** arrives.\n"
+        issues = check_readmes.check_commander_is_bold(text, self.cards, (0, len(text)))
+        self.assertEqual(issues, [])
+
+    def test_unbolded_commander_link_is_an_error(self):
+        text = "[Test Commander](https://scryfall.com/card/tst/1) arrives.\n"
+        issues = check_readmes.check_commander_is_bold(text, self.cards, (0, len(text)))
+        self.assertEqual(len(issues), 1)
+        self.assertEqual(issues[0].level, "ERROR")
+        self.assertIn("wrap it in bold", issues[0].message)
+
+    def test_unbolded_commander_link_outside_span_is_unaffected(self):
+        text = "[Test Commander](https://scryfall.com/card/tst/1) arrives.\n"
+        issues = check_readmes.check_commander_is_bold(text, self.cards, (len(text), len(text)))
+        self.assertEqual(issues, [])
+
+    def test_no_span_means_no_issues(self):
+        text = "[Test Commander](https://scryfall.com/card/tst/1) arrives.\n"
+        issues = check_readmes.check_commander_is_bold(text, self.cards, None)
+        self.assertEqual(issues, [])
+
+    def test_non_commander_links_are_unaffected(self):
+        text = "[Caretaker's Talent](https://scryfall.com/card/blb/6) arrives.\n"
+        issues = check_readmes.check_commander_is_bold(text, self.cards, (0, len(text)))
+        self.assertEqual(issues, [])
+
+
 class LoadMosaicOrderTests(unittest.TestCase):
     def test_bumbleflower_featured_cards_are_configured(self):
         mosaic_order = check_readmes.load_mosaic_order()
@@ -513,6 +560,25 @@ class CheckReadmeTests(unittest.TestCase):
         )
         errors = [i for i in issues if i.level == "ERROR"]
         self.assertTrue(any("is not in the decklist" in i.message for i in errors))
+
+    def test_unbolded_commander_link_in_narrative_is_an_error(self):
+        (self.deck_dir / "deck_mosaic_preview.jpg").write_bytes(b"")
+        readme_text = VALID_LAYOUT_README.replace(
+            "[Caretaker's Talent](https://scryfall.com/card/blb/6/caretakers-talent) is great.\n",
+            "[Test Commander](https://scryfall.com/card/tst/1) arrives.\n",
+        )
+        issues = self._run(readme_text)
+        errors = [i for i in issues if i.level == "ERROR"]
+        self.assertTrue(any("wrap it in bold" in i.message for i in errors))
+
+    def test_bolded_commander_link_in_narrative_has_no_bold_issue(self):
+        (self.deck_dir / "deck_mosaic_preview.jpg").write_bytes(b"")
+        readme_text = VALID_LAYOUT_README.replace(
+            "[Caretaker's Talent](https://scryfall.com/card/blb/6/caretakers-talent) is great.\n",
+            "**[Test Commander](https://scryfall.com/card/tst/1)** arrives.\n",
+        )
+        issues = self._run(readme_text)
+        self.assertFalse(any("wrap it in bold" in i.message for i in issues))
 
 
 class DeckFlavorNameTests(unittest.TestCase):

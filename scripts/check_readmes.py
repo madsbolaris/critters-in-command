@@ -43,6 +43,12 @@ the same folder):
   — must be **bolded** wherever the README links to them (e.g.
   ``**[Wedding Ring](...)**``). A matching link that isn't wrapped in ``**``
   is a hard error.
+* The deck's commander(s) must likewise be **bolded** wherever the flavor
+  narrative section (the ``## <Deck Name>`` section, up to ``## The Deck``)
+  links to them by name (e.g. ``**[Finneas](...)**``). This does not apply
+  to the plain ``# <Commander>`` title or the metadata table's Commander
+  row, only to mentions within the story prose itself. A matching link
+  there that isn't wrapped in ``**`` is a hard error.
 * The README's overall layout must match the shared house style:
   - A ``# <Commander>`` title with just the commander's plain name (no
     flavor subtitle).
@@ -391,6 +397,60 @@ def check_featured_cards_are_bold(text: str, featured_names: list[str],
     return issues
 
 
+def find_narrative_span(text: str) -> tuple[int, int] | None:
+    """Start/end offsets of the flavor narrative section: from the second
+    top-level heading (the "## <Deck Name>" header) up to the next level-2
+    heading (normally "## The Deck"). ``None`` if the document doesn't have
+    at least two headings.
+    """
+    headings = [(len(m.group(1)), m.group(2).strip(), m.start()) for m in HEADING_RE.finditer(text)]
+    if len(headings) < 2:
+        return None
+    start = headings[1][2]
+    end = len(text)
+    for level, _title, pos in headings[2:]:
+        if level == 2:
+            end = pos
+            break
+    return start, end
+
+
+def check_commander_is_bold(text: str, cards: DeckCards, span: tuple[int, int] | None) -> list[Issue]:
+    """Every README link to the deck's commander(s), within the flavor narrative
+    section only, must be wrapped in ``**bold**`` (e.g. ``**[Finneas](...)**``)
+    so the commander stands out from the rest of the cast in the story itself.
+    """
+    issues: list[Issue] = []
+    if span is None or not cards.commander_names:
+        return issues
+    start, end = span
+    for match in LINK_RE.finditer(text, start, end):
+        link_text = match.group(1)
+        for name in cards.commander_names:
+            is_match = (normalize_name(link_text) == normalize_name(name)
+                        or is_shortened_name_match(link_text, name)
+                        or is_character_name_match(link_text, name))
+            if not is_match:
+                printing = scryfall_card_printing(match.group(2))
+                if printing is not None:
+                    entry = cards.by_printing.get(printing)
+                    if (entry is not None and normalize_name(entry[0]) == normalize_name(name)
+                            and is_flavor_name_match(link_text, *printing)):
+                        is_match = True
+            if not is_match:
+                continue
+            before = text[max(0, match.start() - 2):match.start()]
+            after = text[match.end():match.end() + 2]
+            if before != "**" or after != "**":
+                issues.append(Issue(
+                    "ERROR",
+                    f"[{link_text}]({match.group(2)}) refers to the commander '{name}' — wrap it in "
+                    f"bold in the flavor narrative: **[{link_text}]({match.group(2)})**.",
+                ))
+            break
+    return issues
+
+
 # Required metadata-table rows, in order, right after the "# <Commander>" title.
 LAYOUT_TABLE_LABELS = ["Commander", "Colors", "Archetype", "Good against", "Struggles against"]
 
@@ -536,6 +596,8 @@ def check_readme(readme_path: Path, deck_dir: Path, cards: DeckCards,
 
     if featured_names:
         issues.extend(check_featured_cards_are_bold(text, featured_names, cards))
+
+    issues.extend(check_commander_is_bold(text, cards, find_narrative_span(text)))
 
     issues.extend(check_readme_layout(text, deck_dir, cards))
 
