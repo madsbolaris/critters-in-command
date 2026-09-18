@@ -81,7 +81,15 @@ Instead, for every Class B card, analyze it at the **beat** level:
    cards may not belong in place of anything lost; they might support an
    entirely new moment the story doesn't currently have. Don't force them
    into an existing hole just because a hole exists.
-5. Decide, per paragraph, whether to trim, merge, or rebuild — then write
+5. **Check the adjacent paragraphs' jobs before proposing a card for a
+   beat that's missing an item.** Each paragraph should keep to the single
+   purpose established in beat cohesion (editorial-audit lens #9) — don't
+   recommend a card whose flavor actually belongs to the next or previous
+   paragraph's role (e.g. a paragraph about the conspiracy's
+   innocent-looking surface activity shouldn't get a card that reads as
+   "handling objectors/removal" — that's the next paragraph's job). Reread
+   what beat comes right before and after before drafting options.
+6. Decide, per paragraph, whether to trim, merge, or rebuild — then write
    the rebuilt sentences immediately as part of the same pass. A one-line
    rationale per paragraph (in your response, not the README) is useful
    context for the reviewer, but it accompanies the finished draft; it does

@@ -76,7 +76,11 @@ calls for it, not earlier or later just because a card needs a home.
 ## 4. Redundant beats
 
 If multiple cards make the same narrative point, trim to the strongest one
-instead of stacking near-duplicates back to back.
+instead of stacking near-duplicates back to back. This also applies at the
+phrase level: cut filler flourishes/qualifiers that only restate or
+intensify a point already made (e.g. "burrow to burrow", "delight too warm
+to be an act") rather than adding new information — if the plain word
+already conveys the idea, the extra phrase is a redundant beat in miniature.
 
 ## 5. Placement matches the card's own theme
 
@@ -99,6 +103,25 @@ prompt) or a deliberate revisit of card-mapping, never in isolation.
   aloud.
 - Watch for inanimate subjects doing person-things ("the days themselves
   fall under Tutelage") — reread for who/what is actually the subject.
+- A gerund-phrase card name (e.g. "Stocking the Pantry") cannot itself be
+  the grammatical subject performing another verb ("Stocking the Pantry
+  keeps the larder full" is a category error — the phrase describes an
+  action, not an actor). Give it a real agent as the subject ("the staff
+  are always Stocking the Pantry...") or make the card name the object of a
+  preposition — never let it double as an unnamed doer.
+- Default to active voice when fixing a sentence like this. Rewriting a
+  passive construction ("the larder is kept full by Stocking the Pantry")
+  removes the grammar error but trades it for passive voice, which is its
+  own readability defect — check the fix isn't just relocating the problem.
+- Match the described scope precisely to what's intended (e.g. "every
+  guest" vs. a narrower, uninstructed subset like "every latecomer") —
+  don't silently narrow or widen who/what a sentence covers.
+- Watch for a word echo: the same root word appearing twice in one
+  sentence or its immediate neighbor for no reason other than that a card
+  name contains it (e.g. "Warren Warleader marshals the warren" repeats
+  "warren"). This is distinct from lens #4 (redundant *beats*) — this is a
+  literal word-level repetition, fixed by swapping the second occurrence
+  for a synonym (e.g. "marshals the burrow").
 
 ## 7. Agency and causality attribution
 
